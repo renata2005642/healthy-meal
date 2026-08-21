@@ -6,6 +6,15 @@ const links = [
   { href: "/how-it-works", label: "How It Works" },
   { href: "/saved-meals", label: "Saved Meals" },
   { href: "/about", label: "About" },
+  { href: "/core", label: "Core" },
+  { href: "/research", label: "Research" },
+  { href: "/product", label: "Product" },
+  { href: "/pricing", label: "Pricing" },
+  { href: "/marketing", label: "Marketing" },
+  { href: "/chat", label: "Chat" },
+  { href: "/dashboard", label: "Dashboard" },
+  { href: "/docs", label: "Docs" },
+  { href: "/demo", label: "Demo" },
 ];
 
 export default function Navbar() {
