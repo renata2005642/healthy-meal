@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { buildMealPrompt } from "@/lib/prompts";
 
-const GEMINI_MODEL = "gemini-3.8-flash";
+const GEMINI_MODEL = "gemini-3.6-flash";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 
 type GenerateMealRequestBody = {
