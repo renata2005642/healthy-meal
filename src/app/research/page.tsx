@@ -7,91 +7,91 @@ import { type ResearchOutputRow } from "@/lib/research";
 const globalExamples = [
   {
     name: "HelloFresh",
-    description: "Líder global de meal kits, ingredientes pre-porcionados con receta.",
+    description: "Global leader in meal kits, pre-portioned ingredients with a recipe.",
   },
   {
     name: "Blue Apron",
-    description: "Pionero en EE.UU. en el modelo de meal kits por suscripción.",
+    description: "Pioneer of the subscription meal-kit model in the US.",
   },
   {
     name: "EveryPlate",
-    description: "Versión económica de HelloFresh, enfocada en presupuesto ajustado.",
+    description: "Budget-friendly version of HelloFresh, focused on tight budgets.",
   },
   {
     name: "Home Chef",
-    description: "Meal kits con venta también en tiendas físicas.",
+    description: "Meal kits also sold in physical stores.",
   },
   {
     name: "Green Chef",
-    description: "Meal kits enfocados en dietas específicas (keto, vegano, etc.).",
+    description: "Meal kits focused on specific diets (keto, vegan, etc.).",
   },
 ];
 
 const mexicanPlayers = [
   {
     name: "Los Foodistas",
-    type: "Competidor directo",
-    offering: "Meal kits listos para cocinar en casa.",
+    type: "Direct competitor",
+    offering: "Meal kits ready to cook at home.",
   },
   {
     name: "Petramora",
-    type: "Competidor directo",
-    offering: "Venta de kits de comida a domicilio.",
+    type: "Direct competitor",
+    offering: "Sells food kits delivered to your door.",
   },
   {
     name: "Slim Food Factory",
-    type: "Sustituto",
-    offering: "Viandas saludables ya preparadas por suscripción.",
+    type: "Substitute",
+    offering: "Healthy pre-made meals by subscription.",
   },
   {
     name: "Habeats",
-    type: "Sustituto",
-    offering: "Planes de comida (“alimentación inteligente”).",
+    type: "Substitute",
+    offering: "Meal plans (“smart eating”).",
   },
   {
     name: "Myfitnesschef",
-    type: "Sustituto",
-    offering: "Comidas balanceadas gourmet a domicilio.",
+    type: "Substitute",
+    offering: "Balanced gourmet meals delivered to your door.",
   },
   {
     name: "Come Bien",
-    type: "Sustituto",
-    offering: "Comidas preparadas a domicilio.",
+    type: "Substitute",
+    offering: "Prepared meals delivered to your door.",
   },
   {
     name: "No Sugar",
-    type: "Sustituto",
-    offering: "Comida saludable a domicilio.",
+    type: "Substitute",
+    offering: "Healthy food delivered to your door.",
   },
   {
     name: "Rappi/Cornershop",
-    type: "Sustituto amplio",
+    type: "Broad substitute",
     offering:
-      "Apps de entrega de súper o comida, alternativa a usar un servicio especializado.",
+      "Grocery/food delivery apps, an alternative to using a specialized service.",
   },
 ];
 
 const risks = [
   {
-    title: "Riesgo de precio/costo",
-    level: "Alto",
+    title: "Price/cost risk",
+    level: "High",
     width: "w-[90%]",
     reason:
-      "Los ingredientes frescos y la logística en frío encarecen cada kit frente a cocinar con súper normal.",
+      "Fresh ingredients and cold-chain logistics make each kit more expensive than cooking with regular groceries.",
   },
   {
-    title: "Riesgo de ejecución",
-    level: "Medio-alto",
+    title: "Execution risk",
+    level: "Medium-high",
     width: "w-[70%]",
     reason:
-      "Armar, empacar y entregar kits a tiempo exige una operación que todavía no tenemos probada.",
+      "Assembling, packing, and delivering kits on time requires an operation we haven't proven yet.",
   },
   {
-    title: "Riesgo regulatorio",
-    level: "Bajo",
+    title: "Regulatory risk",
+    level: "Low",
     width: "w-[25%]",
     reason:
-      "Vender ingredientes crudos con receta requiere permisos sanitarios estándar, nada especializado.",
+      "Selling raw ingredients with a recipe requires standard health permits, nothing specialized.",
   },
 ];
 
@@ -178,8 +178,7 @@ export default function ResearchPage() {
           Research
         </h1>
         <p className="max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
-          El panorama competitivo de los meal kits, y un lugar para guardar lo que vamos
-          aprendiendo.
+          The competitive landscape for meal kits, and a place to save what we&apos;re learning.
         </p>
       </div>
 
@@ -193,7 +192,7 @@ export default function ResearchPage() {
               htmlFor="query"
               className="text-sm font-medium text-zinc-900 dark:text-zinc-50"
             >
-              ¿Qué estás investigando?
+              What are you researching?
             </label>
             <input
               id="query"
@@ -201,7 +200,7 @@ export default function ResearchPage() {
               required
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Ej. precios de meal kits en México"
+              placeholder="E.g. meal kit pricing in Mexico"
               className="rounded-lg border border-black/10 bg-transparent px-3 py-2 text-sm text-zinc-900 outline-none focus:border-emerald-700 dark:border-white/10 dark:text-zinc-50"
             />
           </div>
@@ -211,7 +210,7 @@ export default function ResearchPage() {
               htmlFor="notes"
               className="text-sm font-medium text-zinc-900 dark:text-zinc-50"
             >
-              Notas / insight
+              Notes / insight
             </label>
             <textarea
               id="notes"
@@ -219,7 +218,7 @@ export default function ResearchPage() {
               rows={4}
               value={notes}
               onChange={(event) => setNotes(event.target.value)}
-              placeholder="Ej. casi nadie vende ingredientes crudos con receta, todos venden comida lista"
+              placeholder="E.g. almost no one sells raw ingredients with a recipe, everyone sells ready meals"
               className="rounded-lg border border-black/10 bg-transparent px-3 py-2 text-sm text-zinc-900 outline-none focus:border-emerald-700 dark:border-white/10 dark:text-zinc-50"
             />
           </div>
@@ -229,12 +228,12 @@ export default function ResearchPage() {
             disabled={saving}
             className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {saving ? "Guardando..." : "Guardar investigación"}
+            {saving ? "Saving..." : "Save research"}
           </button>
 
           {saved && (
             <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-900/40 dark:bg-emerald-950/40 dark:text-emerald-300">
-              Investigación guardada.
+              Research saved.
             </p>
           )}
 
@@ -247,14 +246,14 @@ export default function ResearchPage() {
 
         <div className="flex flex-col gap-4">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-            Investigaciones guardadas
+            Saved research
           </h2>
 
           {recentLoading ? (
             <p className="text-sm text-zinc-600 dark:text-zinc-400">Loading...</p>
           ) : recent.length === 0 ? (
             <p className="text-sm text-zinc-600 dark:text-zinc-400">
-              Todavía no hay investigaciones guardadas.
+              No saved research yet.
             </p>
           ) : (
             <ul className="flex flex-col gap-3">
@@ -278,7 +277,7 @@ export default function ResearchPage() {
 
       <section className="flex flex-col gap-6">
         <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          5 ejemplos globales
+          5 global examples
         </h2>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {globalExamples.map((example) => (
@@ -299,19 +298,19 @@ export default function ResearchPage() {
 
       <section className="flex flex-col gap-4 rounded-2xl border border-black/10 p-6 dark:border-white/10">
         <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          Localización a México
+          Mexico localization
         </h2>
         <p className="text-sm text-zinc-600 dark:text-zinc-400">
-          En México casi no hay competencia directa de &ldquo;kit para cocinar&rdquo;. La
-          mayoría de los competidores locales venden comida ya preparada y lista para
-          calentar, no ingredientes crudos con receta. Eso deja abierto el espacio de quien
-          quiere cocinar en casa sin planear ni ir al súper.
+          In Mexico there&rsquo;s almost no direct &ldquo;cook-it-yourself kit&rdquo; competition. Most
+          local competitors sell food that&rsquo;s already prepared and ready to heat up, not
+          raw ingredients with a recipe. That leaves the space open for people who want to
+          cook at home without planning or going to the grocery store.
         </p>
       </section>
 
       <section className="flex flex-col gap-6">
         <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          Competidores y sustitutos en México
+          Competitors and substitutes in Mexico
         </h2>
 
         <div className="flex flex-col gap-2">
@@ -319,14 +318,14 @@ export default function ResearchPage() {
             htmlFor="filter"
             className="text-sm font-medium text-zinc-900 dark:text-zinc-50"
           >
-            Buscar por nombre o tipo
+            Search by name or type
           </label>
           <input
             id="filter"
             type="text"
             value={filter}
             onChange={(event) => setFilter(event.target.value)}
-            placeholder="Ej. sustituto"
+            placeholder="E.g. substitute"
             className="rounded-lg border border-black/10 bg-transparent px-3 py-2 text-sm text-zinc-900 outline-none focus:border-emerald-700 dark:border-white/10 dark:text-zinc-50"
           />
         </div>
@@ -335,9 +334,9 @@ export default function ResearchPage() {
           <table className="w-full min-w-[36rem] text-left text-sm">
             <thead className="border-b border-black/10 text-zinc-900 dark:border-white/10 dark:text-zinc-50">
               <tr>
-                <th className="px-4 py-3 font-semibold">Nombre</th>
-                <th className="px-4 py-3 font-semibold">Tipo</th>
-                <th className="px-4 py-3 font-semibold">Qué ofrece</th>
+                <th className="px-4 py-3 font-semibold">Name</th>
+                <th className="px-4 py-3 font-semibold">Type</th>
+                <th className="px-4 py-3 font-semibold">What it offers</th>
               </tr>
             </thead>
             <tbody>
@@ -347,7 +346,7 @@ export default function ResearchPage() {
                     colSpan={3}
                     className="px-4 py-6 text-center text-zinc-600 dark:text-zinc-400"
                   >
-                    No hay resultados para esa búsqueda.
+                    No results for that search.
                   </td>
                 </tr>
               ) : (
@@ -377,7 +376,7 @@ export default function ResearchPage() {
 
       <section className="flex flex-col gap-6">
         <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-50">
-          Mapa de riesgo
+          Risk map
         </h2>
         <div className="grid gap-6 sm:grid-cols-3">
           {risks.map((risk) => (

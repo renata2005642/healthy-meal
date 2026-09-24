@@ -42,14 +42,14 @@ export default function DashboardPage() {
           Dashboard
         </h1>
         <p className="max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
-          Lo último que hemos guardado en Healthy Meals.
+          The latest we&apos;ve saved in Healthy Meals.
         </p>
       </div>
 
       <div className="flex flex-col gap-4 rounded-2xl border border-black/10 p-6 dark:border-white/10">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-            Última investigación
+            Latest research
           </h2>
           <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
             Research
@@ -60,7 +60,7 @@ export default function DashboardPage() {
           <p className="text-sm text-zinc-600 dark:text-zinc-400">Loading...</p>
         ) : !latest ? (
           <p className="text-sm text-zinc-600 dark:text-zinc-400">
-            Todavía no hay investigaciones guardadas.
+            No saved research yet.
           </p>
         ) : (
           <>

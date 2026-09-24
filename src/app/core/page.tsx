@@ -128,7 +128,7 @@ export default function CorePage() {
             htmlFor="ingredients"
             className="text-sm font-medium text-zinc-900 dark:text-zinc-50"
           >
-            Ingredientes disponibles
+            Available ingredients
           </label>
           <textarea
             id="ingredients"
@@ -136,7 +136,7 @@ export default function CorePage() {
             rows={3}
             value={ingredients}
             onChange={(event) => setIngredients(event.target.value)}
-            placeholder="Ej. arroz, huevo, espinaca, pechuga de pollo"
+            placeholder="E.g. rice, egg, spinach, chicken breast"
             className="rounded-lg border border-black/10 bg-transparent px-3 py-2 text-sm text-zinc-900 outline-none focus:border-emerald-700 dark:border-white/10 dark:text-zinc-50"
           />
         </div>
@@ -144,7 +144,7 @@ export default function CorePage() {
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="flex flex-col gap-2">
             <label htmlFor="time" className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-              Tiempo disponible
+              Time available
             </label>
             <select
               id="time"
@@ -163,7 +163,7 @@ export default function CorePage() {
               htmlFor="budget"
               className="text-sm font-medium text-zinc-900 dark:text-zinc-50"
             >
-              Presupuesto
+              Budget
             </label>
             <select
               id="budget"
@@ -171,9 +171,9 @@ export default function CorePage() {
               onChange={(event) => setBudget(event.target.value)}
               className="rounded-lg border border-black/10 bg-transparent px-3 py-2 text-sm text-zinc-900 outline-none focus:border-emerald-700 dark:border-white/10 dark:text-zinc-50"
             >
-              <option value="low">Bajo</option>
-              <option value="medium">Medio</option>
-              <option value="high">Alto</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
             </select>
           </div>
         </div>
@@ -214,7 +214,7 @@ export default function CorePage() {
           <p className="text-sm text-zinc-600 dark:text-zinc-400">{meal.description}</p>
           <div className="flex flex-col gap-2">
             <h3 className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
-              Ingredientes usados
+              Ingredients used
             </h3>
             <ul className="flex flex-wrap gap-2">
               {meal.ingredients_used.map((ingredient) => (

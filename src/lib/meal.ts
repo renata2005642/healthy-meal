@@ -5,9 +5,9 @@ export const TIME_LABELS: Record<string, string> = {
 };
 
 export const BUDGET_LABELS: Record<string, string> = {
-  low: "Bajo",
-  medium: "Medio",
-  high: "Alto",
+  low: "Low",
+  medium: "Medium",
+  high: "High",
 };
 
 export type MealIdea = {
