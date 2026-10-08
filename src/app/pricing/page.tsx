@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import {
   ASSUMPTIONS,
   SCENARIOS,
@@ -35,6 +35,46 @@ export default function PricingPage() {
     roommateCustomers: Number(roommateCustomers),
     scenario: scenarioId,
   });
+
+  const [scenarioName, setScenarioName] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
+  const [saved, setSaved] = useState(false);
+
+  async function handleSave(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setSaving(true);
+    setSaveError(null);
+    setSaved(false);
+
+    try {
+      const response = await fetch("/api/save-scenario", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          scenarioName,
+          scenarioType: scenarioId,
+          soloCustomers: Number(soloCustomers),
+          roommateCustomers: Number(roommateCustomers),
+          monthlyRevenue: revenue.monthlyRevenue,
+          annualRevenue: revenue.annualRevenue,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data?.error ?? "Something went wrong saving your scenario.");
+      }
+
+      setSaved(true);
+      setScenarioName("");
+    } catch (err) {
+      setSaveError(err instanceof Error ? err.message : "Something went wrong.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-16 px-6 py-20">
@@ -172,6 +212,49 @@ export default function PricingPage() {
             </span>
           </div>
         </div>
+
+        <form
+          onSubmit={handleSave}
+          className="flex flex-col gap-4 border-t border-black/10 pt-6 dark:border-white/10"
+        >
+          <div className="flex flex-col gap-2">
+            <label
+              htmlFor="scenario-name"
+              className="text-sm font-medium text-zinc-900 dark:text-zinc-50"
+            >
+              Scenario name
+            </label>
+            <input
+              id="scenario-name"
+              type="text"
+              required
+              value={scenarioName}
+              onChange={(event) => setScenarioName(event.target.value)}
+              placeholder="E.g. First semester launch"
+              className={inputClasses}
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={saving}
+            className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {saving ? "Saving..." : "Save scenario"}
+          </button>
+
+          {saved && (
+            <p className="rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800 dark:border-emerald-900/40 dark:bg-emerald-950/40 dark:text-emerald-300">
+              Scenario saved.
+            </p>
+          )}
+
+          {saveError && (
+            <p className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-400">
+              {saveError}
+            </p>
+          )}
+        </form>
       </section>
 
       <section className="flex flex-col gap-6">
