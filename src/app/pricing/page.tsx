@@ -40,6 +40,11 @@ function scenarioLabel(id: string): string {
   return SCENARIOS.find((s) => s.id === id)?.name ?? id;
 }
 
+// A customer count must be a whole number of 0 or more (no blanks, signs, or decimals).
+function isValidCount(value: string): boolean {
+  return /^\d+$/.test(value.trim());
+}
+
 const inputClasses =
   "rounded-lg border border-black/10 bg-transparent px-3 py-2 text-sm text-zinc-900 outline-none focus:border-emerald-700 dark:border-white/10 dark:text-zinc-50";
 
@@ -51,6 +56,7 @@ export default function PricingPage() {
   const [scenarioId, setScenarioId] = useState<ScenarioId>("base");
 
   const scenario = SCENARIOS.find((s) => s.id === scenarioId) ?? SCENARIOS[1];
+  const countsValid = isValidCount(soloCustomers) && isValidCount(roommateCustomers);
   const revenue = calculateRevenue({
     soloCustomers: Number(soloCustomers),
     roommateCustomers: Number(roommateCustomers),
@@ -97,6 +103,7 @@ export default function PricingPage() {
 
   async function handleSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (!countsValid) return;
     setSaving(true);
     setSaveError(null);
     setSaved(false);
@@ -191,7 +198,11 @@ export default function PricingPage() {
               inputMode="numeric"
               value={soloCustomers}
               onChange={(event) => setSoloCustomers(event.target.value)}
-              className={inputClasses}
+              aria-invalid={!isValidCount(soloCustomers)}
+              aria-describedby={countsValid ? undefined : "count-error"}
+              className={`${inputClasses} ${
+                isValidCount(soloCustomers) ? "" : "border-red-500 dark:border-red-500"
+              }`}
             />
           </div>
 
@@ -210,10 +221,23 @@ export default function PricingPage() {
               inputMode="numeric"
               value={roommateCustomers}
               onChange={(event) => setRoommateCustomers(event.target.value)}
-              className={inputClasses}
+              aria-invalid={!isValidCount(roommateCustomers)}
+              aria-describedby={countsValid ? undefined : "count-error"}
+              className={`${inputClasses} ${
+                isValidCount(roommateCustomers) ? "" : "border-red-500 dark:border-red-500"
+              }`}
             />
           </div>
         </div>
+
+        {!countsValid && (
+          <p
+            id="count-error"
+            className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-400"
+          >
+            Enter a whole number of 0 or more.
+          </p>
+        )}
 
         <div className="flex flex-col gap-3">
           <span className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
@@ -257,7 +281,7 @@ export default function PricingPage() {
               Monthly revenue
             </span>
             <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-              {formatMxn(revenue.monthlyRevenue)}
+              {countsValid ? formatMxn(revenue.monthlyRevenue) : "—"}
             </span>
           </div>
           <div className="flex flex-col gap-2 rounded-2xl bg-emerald-50 p-6 dark:bg-emerald-950/40">
@@ -265,7 +289,7 @@ export default function PricingPage() {
               Annual revenue
             </span>
             <span className="text-3xl font-bold text-zinc-900 dark:text-zinc-50">
-              {formatMxn(revenue.annualRevenue)}
+              {countsValid ? formatMxn(revenue.annualRevenue) : "—"}
             </span>
           </div>
         </div>
@@ -294,7 +318,7 @@ export default function PricingPage() {
 
           <button
             type="submit"
-            disabled={saving}
+            disabled={saving || !countsValid}
             className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-800 disabled:cursor-not-allowed disabled:opacity-60"
           >
             {saving ? "Saving..." : "Save scenario"}
