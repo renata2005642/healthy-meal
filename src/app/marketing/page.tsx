@@ -60,7 +60,7 @@ function Card({
         <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">{title}</h3>
         <CopyButton text={copyText} label={title} />
       </div>
-      <div lang="es-MX" className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3">
         {children}
       </div>
     </article>

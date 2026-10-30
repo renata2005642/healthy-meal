@@ -1,5 +1,5 @@
 // Hardcoded marketing content for /marketing (no React, no Supabase, no AI API).
-// Copy is in Mexican Spanish for the target audience. Prep times match src/data/meal-kits.ts.
+// Copy is in English for college students living away from home in Mexico. Prep times match src/data/meal-kits.ts.
 // It leaves out prices and discounts on purpose: plan pricing is still an assumption.
 
 // Fixed-length array, so tsc fails if a list has the wrong number of items.
@@ -67,20 +67,20 @@ export type CalendarEntry = {
 
 export const BRAND: Brand = {
   name: "Healthy Meals",
-  tagline: "Come mejor. Cocina fácil.",
+  tagline: "Eat better. Cook easier.",
   voice:
-    "Cercana, práctica y sin culpa. Hablamos de tú, como un amigo que ya aprendió a cocinar: sin regaños, sin dietas y sin palabras de nutriólogo.",
+    "Friendly, practical, and guilt-free. We talk like a friend who already figured out how to cook: no lectures, no diets, and no nutritionist jargon.",
   colors: [
-    { name: "Verde nopal", hex: "#047857", usage: "Color principal, botones y enlaces" },
-    { name: "Maíz", hex: "#F2B632", usage: "Acentos y etiquetas" },
-    { name: "Chile", hex: "#C8432B", usage: "Avisos y detalles puntuales" },
-    { name: "Crema", hex: "#FFF8EC", usage: "Fondos" },
-    { name: "Carbón", hex: "#1C1917", usage: "Texto" },
+    { name: "Nopal green", hex: "#047857", usage: "Primary color, buttons, and links" },
+    { name: "Corn", hex: "#F2B632", usage: "Accents and tags" },
+    { name: "Chile", hex: "#C8432B", usage: "Alerts and small details" },
+    { name: "Cream", hex: "#FFF8EC", usage: "Backgrounds" },
+    { name: "Charcoal", hex: "#1C1917", usage: "Text" },
   ],
   fonts: [
-    { role: "Títulos", family: "Geist", cssVariable: "var(--font-geist-sans)" },
-    { role: "Texto", family: "Geist", cssVariable: "var(--font-geist-sans)" },
-    { role: "Etiquetas y datos", family: "Geist Mono", cssVariable: "var(--font-geist-mono)" },
+    { role: "Headings", family: "Geist", cssVariable: "var(--font-geist-sans)" },
+    { role: "Body", family: "Geist", cssVariable: "var(--font-geist-sans)" },
+    { role: "Labels and data", family: "Geist Mono", cssVariable: "var(--font-geist-mono)" },
   ],
 };
 
@@ -89,128 +89,128 @@ export const PERSONA: Persona = {
   age: 20,
   city: "Guadalajara, Jalisco",
   situation:
-    "Estudia ingeniería, se mudó de su ciudad para ir a la universidad y vive sola en un departamento pequeño. Reparte su dinero entre renta, transporte y comida.",
+    "Engineering student who moved to a new city for college and lives alone in a small apartment. Every peso gets split between rent, transportation, and food.",
   goals: [
-    "Comer mejor sin dedicarle horas a la cocina",
-    "Gastar menos en comida a domicilio",
-    "Aprender a cocinar lo básico",
+    "Eat better without spending hours in the kitchen",
+    "Spend less on food delivery",
+    "Learn the cooking basics",
   ],
   painPoints: [
-    "No sabe qué cocinar después de un día de clases",
-    "Las recetas piden más ingredientes de los que usa una persona",
-    "Lo que compra en el súper se echa a perder antes de usarlo",
+    "Has no idea what to cook after a full day of classes",
+    "Recipes call for way more ingredients than one person needs",
+    "Groceries go bad before they get used",
   ],
-  quote: "Quiero comer bien, pero a las nueve de la noche lo más fácil es pedir algo.",
+  quote: "I want to eat well, but at 9 p.m. it's just easier to order something.",
 };
 
 export const LANDING_COPY: LandingCopy = {
-  headline: "Vives solo, no tienes por qué comer mal",
+  headline: "Living alone doesn't have to mean eating badly",
   subheadline:
-    "Healthy Meals te manda kits con los ingredientes porcionados y la receta paso a paso para que cocines algo rico en 10 a 20 minutos, aunque nunca hayas prendido la estufa.",
+    "Healthy Meals sends you kits with pre-portioned ingredients and step-by-step recipes, so you can cook something great in 10 to 20 minutes, even if you've never turned on the stove.",
   benefits: [
-    "Ingredientes medidos para ti: compras solo lo que vas a cocinar y desperdicias menos.",
-    "Recetas de 10 a 20 minutos que caben entre clases, tareas y trabajo.",
-    "Pasos simples, sin técnicas raras ni utensilios que no tienes.",
+    "Ingredients measured for you: you only get what you'll actually cook, so less goes to waste.",
+    "Recipes that take 10 to 20 minutes and fit between classes, homework, and work.",
+    "Simple steps, with no fancy techniques or tools you don't own.",
   ],
-  cta: "Quiero mi primer kit",
+  cta: "Order your first kit",
 };
 
 export const SOCIAL_POSTS: Tuple<SocialPost, 10> = [
   {
     channel: "Instagram",
     caption:
-      "Salir de casa de tus papás: fácil. Saber qué cenar el martes: otra historia. Healthy Meals llega para resolver la parte de la comida.",
-    hashtags: "#VivirSolo #VidaUniversitaria #HealthyMeals",
+      "Moving out of your parents' place: easy. Figuring out what's for dinner on a Tuesday: a whole other story. Healthy Meals is here for the food part.",
+    hashtags: "#LivingAlone #CollegeLife #HealthyMeals",
   },
   {
     channel: "TikTok",
-    caption: "POV: abres el refri y solo hay media cebolla y salsa de soya. Esto tiene solución.",
-    hashtags: "#EstudianteForaneo #CocinaFacil #HealthyMeals",
+    caption: "POV: you open the fridge and all that's in there is half an onion and some soy sauce. We can fix this.",
+    hashtags: "#StudentLife #EasyCooking #HealthyMeals",
   },
   {
     channel: "Instagram",
     caption:
-      "Pasta de tomate y albahaca en 10 minutos. Sí, tardas más en elegir qué pedir a domicilio.",
-    hashtags: "#RecetasFaciles #ComidaParaUno #HealthyMeals",
+      "Tomato basil pasta in 10 minutes. Yes, that's less time than it takes you to pick something on a delivery app.",
+    hashtags: "#EasyRecipes #CookingForOne #HealthyMeals",
   },
   {
     channel: "Facebook",
     caption:
-      "¿Eres foráneo y vives solo? Cuéntanos: ¿cuál es la comida que más repites en la semana? Sin juicios, todos hemos estado ahí.",
-    hashtags: "#Foraneos #HealthyMeals",
+      "Out-of-town student living alone? Tell us: what's the meal you eat most often during the week? No judgment, we've all been there.",
+    hashtags: "#OutOfTownStudents #HealthyMeals",
   },
   {
     channel: "Instagram",
     caption:
-      "Tres señales de que necesitas un kit: tu sartén sigue nuevo, conoces al repartidor por su nombre y tu cena de ayer fue cereal.",
-    hashtags: "#VidaDeEstudiante #HealthyMeals",
+      "Three signs you need a kit: your pan still looks brand new, you know your delivery driver by name, and last night's dinner was cereal.",
+    hashtags: "#StudentLife #HealthyMeals",
   },
   {
     channel: "TikTok",
-    caption: "Cocinar para una persona no debería dejarte con medio kilo de jitomate echándose a perder.",
-    hashtags: "#ComidaParaUno #TipsDeCocina #HealthyMeals",
+    caption: "Cooking for one shouldn't leave you with a pile of tomatoes going bad on the counter.",
+    hashtags: "#CookingForOne #CookingTips #HealthyMeals",
   },
   {
     channel: "WhatsApp",
     caption:
-      "Si tu amigo foráneo sobrevive a base de sopas instantáneas, mándale esto. Healthy Meals: kits simples para estudiantes que viven solos.",
+      "If your out-of-town friend is surviving on instant noodles, send them this. Healthy Meals: simple kits for students living on their own.",
     hashtags: "#HealthyMeals",
   },
   {
     channel: "Instagram",
     caption:
-      "Bowl de pollo con frijoles negros, arroz y un toque de limón, listo en 20 minutos. Comida de verdad en un día de exámenes.",
-    hashtags: "#BowlDePollo #SemanaDeExamenes #HealthyMeals",
+      "Chicken bowl with black beans, rice, and a squeeze of lime, ready in 20 minutes. Real food, even during exam week.",
+    hashtags: "#ChickenBowl #ExamWeek #HealthyMeals",
   },
   {
     channel: "Facebook",
     caption:
-      "A los papás de foráneos: sabemos que preguntan si ya comieron. Healthy Meals ayuda a que la respuesta sea sí, y que no haya sido cereal.",
-    hashtags: "#EstudiantesForaneos #HealthyMeals",
+      "To the parents of students living away from home: we know you keep asking if they've eaten. Healthy Meals helps the answer be yes, and not just cereal.",
+    hashtags: "#OutOfTownStudents #HealthyMeals",
   },
   {
     channel: "TikTok",
-    caption: "No necesitas saber cocinar. Necesitas una receta clara y los ingredientes correctos.",
-    hashtags: "#AprendeACocinar #CocinaFacil #HealthyMeals",
+    caption: "You don't need to know how to cook. You just need a clear recipe and the right ingredients.",
+    hashtags: "#LearnToCook #EasyCooking #HealthyMeals",
   },
 ];
 
 export const VIDEO_SCRIPTS: Tuple<VideoScript, 3> = [
   {
-    title: "La cena del martes",
-    hook: "Son las nueve de la noche, acabas de llegar de clases y en tu refri solo hay media cebolla.",
-    body: "Abres tu kit de Healthy Meals: los ingredientes ya vienen porcionados y la receta va paso a paso. Pones la pasta, preparas la salsa de tomate y albahaca, y en 10 minutos estás cenando algo hecho por ti.",
-    cta: "Deja de improvisar la cena. Pide tu primer kit de Healthy Meals.",
+    title: "Tuesday night dinner",
+    hook: "It's 9 p.m., you just got back from class, and all that's in your fridge is half an onion.",
+    body: "You open your Healthy Meals kit: the ingredients are already portioned and the recipe walks you through every step. You boil the pasta, make the tomato basil sauce, and 10 minutes later you're eating something you made yourself.",
+    cta: "Stop improvising dinner. Order your first Healthy Meals kit.",
   },
   {
-    title: "Cocinar para uno",
-    hook: "Nadie te dice esto cuando te mudas solo: el súper está pensado para familias.",
-    body: "Compras un manojo de cilantro para una receta y el resto termina en la basura. Con Healthy Meals recibes solo lo que vas a usar en cada comida, medido para que cocines sin que nada se quede olvidado en el refri.",
-    cta: "Cocina para uno sin desperdiciar. Conoce Healthy Meals.",
+    title: "Cooking for one",
+    hook: "Nobody tells you this when you move out: grocery stores are built for families.",
+    body: "You buy a whole bunch of cilantro for one recipe and the rest ends up in the trash. With Healthy Meals you only get what you'll use for each meal, measured out so nothing gets forgotten in the back of the fridge.",
+    cta: "Cook for one without the waste. Check out Healthy Meals.",
   },
   {
-    title: "Mi primera receta",
-    hook: "Nunca había prendido la estufa, y hoy preparé esto en 15 minutos.",
-    body: "Corta las verduras, calienta el sartén, agrega los fideos y la salsa de soya con jengibre. Eso es todo. Con instrucciones claras e ingredientes listos, cocinar deja de dar miedo y se vuelve parte de tu semana.",
-    cta: "Tu primera receta te está esperando. Prueba Healthy Meals.",
+    title: "My first recipe",
+    hook: "I had never turned on a stove, and today I made this in 15 minutes.",
+    body: "Chop the veggies, heat up the pan, add the noodles and the soy-ginger sauce. That's it. With clear instructions and the ingredients ready to go, cooking stops being scary and becomes part of your week.",
+    cta: "Your first recipe is waiting. Try Healthy Meals.",
   },
 ];
 
 export const CAMPAIGN_CALENDAR: Tuple<CalendarEntry, 14> = [
-  { day: 1, channel: "Instagram", idea: "Post de presentación: qué es Healthy Meals y para quién es." },
-  { day: 2, channel: "TikTok", idea: "Publicar el video “La cena del martes”." },
-  { day: 3, channel: "Instagram", idea: "Historias con encuesta: ¿qué cenaste anoche?" },
-  { day: 4, channel: "Facebook", idea: "Preguntar en grupos de foráneos qué comida repiten más." },
-  { day: 5, channel: "TikTok", idea: "Video del POV del refri con media cebolla." },
-  { day: 6, channel: "Instagram", idea: "Carrusel de la pasta de tomate y albahaca en 10 minutos." },
-  { day: 7, channel: "WhatsApp", idea: "Compartir el mensaje para el amigo foráneo en grupos de la universidad." },
-  { day: 8, channel: "TikTok", idea: "Publicar el video “Cocinar para uno”." },
-  { day: 9, channel: "Instagram", idea: "Carrusel: tres señales de que necesitas un kit." },
-  { day: 10, channel: "Facebook", idea: "Post dirigido a los papás de estudiantes foráneos." },
-  { day: 11, channel: "Instagram", idea: "Reel del bowl de pollo para la semana de exámenes." },
-  { day: 12, channel: "TikTok", idea: "Publicar el video “Mi primera receta”." },
-  { day: 13, channel: "Instagram", idea: "Historias con preguntas y respuestas sobre cómo funcionan los kits." },
-  { day: 14, channel: "WhatsApp", idea: "Cierre de campaña: invitación directa a pedir el primer kit." },
+  { day: 1, channel: "Instagram", idea: "Intro post: what Healthy Meals is and who it's for." },
+  { day: 2, channel: "TikTok", idea: "Post the “Tuesday night dinner” video." },
+  { day: 3, channel: "Instagram", idea: "Stories poll: what did you have for dinner last night?" },
+  { day: 4, channel: "Facebook", idea: "Ask out-of-town student groups which meal they repeat the most." },
+  { day: 5, channel: "TikTok", idea: "POV video of the fridge with half an onion." },
+  { day: 6, channel: "Instagram", idea: "Carousel: tomato basil pasta in 10 minutes." },
+  { day: 7, channel: "WhatsApp", idea: "Share the out-of-town friend message in college group chats." },
+  { day: 8, channel: "TikTok", idea: "Post the “Cooking for one” video." },
+  { day: 9, channel: "Instagram", idea: "Carousel: three signs you need a kit." },
+  { day: 10, channel: "Facebook", idea: "Post aimed at parents of students living away from home." },
+  { day: 11, channel: "Instagram", idea: "Reel: chicken bowl for exam week." },
+  { day: 12, channel: "TikTok", idea: "Post the “My first recipe” video." },
+  { day: 13, channel: "Instagram", idea: "Stories Q&A about how the kits work." },
+  { day: 14, channel: "WhatsApp", idea: "Campaign wrap-up: direct invite to order a first kit." },
 ];
 
 function bulletList(items: string[]): string {
