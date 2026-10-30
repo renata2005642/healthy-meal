@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const buttonClasses =
+export const buttonClasses =
   "shrink-0 rounded-full border border-black/10 px-3 py-1 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-100 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-zinc-800";
 
 const COPY_LABELS = { idle: "Copy", copied: "Copied", failed: "Copy failed" };
