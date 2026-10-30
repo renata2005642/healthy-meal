@@ -1,5 +1,20 @@
 import Link from "next/link";
-import { mealKits } from "@/data/meal-kits";
+import MealKitGrid from "@/components/MealKitGrid";
+
+const benefits = [
+  {
+    title: "Made for one person",
+    description: "Pre-portioned ingredients, so you don't end up with groceries going bad.",
+  },
+  {
+    title: "Ready in 10 to 20 minutes",
+    description: "Recipes short enough to fit between classes, homework, and work.",
+  },
+  {
+    title: "No cooking experience needed",
+    description: "Clear, step-by-step recipes with no fancy techniques.",
+  },
+];
 
 const steps = [
   {
@@ -28,19 +43,46 @@ export default function Home() {
     <div className="flex flex-col">
       <section className="mx-auto flex w-full max-w-6xl flex-col items-center gap-6 px-6 py-24 text-center">
         <h1 className="max-w-2xl text-4xl font-bold tracking-tight text-zinc-900 dark:text-zinc-50 sm:text-5xl">
-          Eat better. Cook easier.
+          Real meals in 20 minutes, even if you&apos;ve never cooked
         </h1>
         <p className="max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
-          Living alone shouldn&apos;t mean choosing between cooking from scratch or ordering
-          takeout every night. Healthy Meals shows you simple, accessible meal kits so you can
-          eat well without the hassle.
+          Healthy Meals makes simple meal kits for college students living on their own in
+          Mexico: pre-portioned ingredients and step-by-step recipes, so you can skip the
+          takeout and eat well.
         </p>
-        <Link
-          href="/catalog"
-          className="mt-2 inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-800"
-        >
-          Explore the Catalog
-        </Link>
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-3">
+          <Link
+            href="/kits"
+            className="inline-flex items-center justify-center rounded-full bg-emerald-700 px-6 py-3 text-sm font-semibold text-white hover:bg-emerald-800"
+          >
+            See the Kits
+          </Link>
+          <Link
+            href="/marketing"
+            className="inline-flex items-center justify-center rounded-full border border-black/10 px-6 py-3 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-zinc-800"
+          >
+            View Marketing
+          </Link>
+        </div>
+      </section>
+
+      <section className="border-t border-black/10 px-6 py-20 dark:border-white/10">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-center text-2xl font-semibold text-zinc-900 dark:text-zinc-50 sm:text-3xl">
+            Why Healthy Meals
+          </h2>
+          <div className="mt-12 grid gap-6 sm:grid-cols-3">
+            {benefits.map((benefit) => (
+              <div
+                key={benefit.title}
+                className="flex flex-col gap-2 rounded-2xl border border-black/10 p-6 dark:border-white/10"
+              >
+                <h3 className="font-semibold text-zinc-900 dark:text-zinc-50">{benefit.title}</h3>
+                <p className="text-sm text-zinc-600 dark:text-zinc-400">{benefit.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="border-t border-black/10 bg-zinc-50 px-6 py-20 dark:border-white/10 dark:bg-zinc-950">
@@ -71,24 +113,8 @@ export default function Home() {
           <h2 className="text-center text-2xl font-semibold text-zinc-900 dark:text-zinc-50 sm:text-3xl">
             Meal Kits You&apos;ll Actually Cook
           </h2>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {mealKits.map((kit) => (
-              <div
-                key={kit.id}
-                className="flex flex-col gap-3 rounded-2xl border border-black/10 p-6 dark:border-white/10"
-              >
-                <span className="w-fit rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300">
-                  {kit.category}
-                </span>
-                <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
-                  {kit.name}
-                </h3>
-                <p className="text-sm text-zinc-600 dark:text-zinc-400">{kit.description}</p>
-                <p className="mt-auto text-sm font-medium text-zinc-500 dark:text-zinc-400">
-                  Prep time: {kit.prepTime}
-                </p>
-              </div>
-            ))}
+          <div className="mt-12">
+            <MealKitGrid />
           </div>
         </div>
       </section>

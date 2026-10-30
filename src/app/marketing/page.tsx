@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import ABTester from "@/components/ABTester";
 import { CopyButton, ExportButton } from "@/components/MarketingActions";
 import {
   BRAND,
@@ -105,6 +106,8 @@ export default function MarketingPage() {
           Brand system, persona, and launch content for Healthy Meals, ready to copy or export.
         </p>
       </div>
+
+      <ABTester />
 
       <Section
         title="Brand + Persona"

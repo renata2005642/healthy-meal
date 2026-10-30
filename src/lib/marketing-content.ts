@@ -65,6 +65,27 @@ export type CalendarEntry = {
   idea: string;
 };
 
+export type ABOptionId = "A" | "B";
+
+export type ABOption = {
+  id: ABOptionId;
+  text: string;
+};
+
+export type ABTest = {
+  id: string;
+  title: string;
+  options: Tuple<ABOption, 2>;
+};
+
+export type ABVotes = Record<ABOptionId, number>;
+
+export type ABSummary = {
+  percent: ABVotes;
+  // null until the first vote.
+  winner: ABOptionId | "tie" | null;
+};
+
 export const BRAND: Brand = {
   name: "Healthy Meals",
   tagline: "Eat better. Cook easier.",
@@ -212,6 +233,35 @@ export const CAMPAIGN_CALENDAR: Tuple<CalendarEntry, 14> = [
   { day: 13, channel: "Instagram", idea: "Stories Q&A about how the kits work." },
   { day: 14, channel: "WhatsApp", idea: "Campaign wrap-up: direct invite to order a first kit." },
 ];
+
+export const AB_TESTS: Tuple<ABTest, 2> = [
+  {
+    id: "headline",
+    title: "Test 1: Headlines",
+    options: [
+      { id: "A", text: BRAND.tagline },
+      { id: "B", text: "Tired of instant noodles every night?" },
+    ],
+  },
+  {
+    id: "cta",
+    title: "Test 2: CTAs",
+    options: [
+      { id: "A", text: LANDING_COPY.cta },
+      { id: "B", text: "See this week's kits" },
+    ],
+  },
+];
+
+export function summarizeVotes(votes: ABVotes): ABSummary {
+  const total = votes.A + votes.B;
+  if (total === 0) return { percent: { A: 0, B: 0 }, winner: null };
+
+  // B is derived from A so the two percentages always add up to 100.
+  const percentA = Math.round((votes.A / total) * 100);
+  const winner = votes.A === votes.B ? "tie" : votes.A > votes.B ? "A" : "B";
+  return { percent: { A: percentA, B: 100 - percentA }, winner };
+}
 
 function bulletList(items: string[]): string {
   return items.map((item) => `- ${item}`).join("\n");
