@@ -1,6 +1,14 @@
 // Shared types and limits for the marketing_assets table.
 
-export const ASSET_TYPES = ["landing", "post", "script", "calendar", "headline"] as const;
+export const ASSET_TYPES = [
+  "landing",
+  "post",
+  "script",
+  "calendar",
+  "headline",
+  "brand",
+  "persona",
+] as const;
 
 export type AssetType = (typeof ASSET_TYPES)[number];
 

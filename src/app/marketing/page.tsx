@@ -124,7 +124,7 @@ export default function MarketingPage() {
           filename="healthy-meals-brand-persona.txt"
         >
           <div className="grid gap-6 sm:grid-cols-2">
-            <Card title="Brand system" assetType="headline" copyText={formatBrand(BRAND)}>
+            <Card title="Brand system" assetType="brand" copyText={formatBrand(BRAND)}>
               <div className="flex flex-col gap-1">
                 <p className="text-lg font-bold text-zinc-900 dark:text-zinc-50">{BRAND.name}</p>
                 <p className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
@@ -164,7 +164,7 @@ export default function MarketingPage() {
               </Field>
             </Card>
 
-            <Card title="Target persona" assetType="landing" copyText={formatPersona(PERSONA)}>
+            <Card title="Target persona" assetType="persona" copyText={formatPersona(PERSONA)}>
               <div className="flex flex-col gap-1">
                 <p className="text-lg font-bold text-zinc-900 dark:text-zinc-50">
                   {PERSONA.name}, {PERSONA.age}
