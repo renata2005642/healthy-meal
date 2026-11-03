@@ -5,12 +5,15 @@ import type { MealKit } from "@/data/meal-kits";
 import {
   CATEGORY_OPTIONS,
   COOKING_FOR_OPTIONS,
+  MAX_USER_MESSAGE_LENGTH,
   TIME_OPTIONS,
   detectGuardrail,
   pickKits,
   type ChatAnswers,
+  type ChatRating,
   type Guardrail,
   type KitPick,
+  type SaveChatPayload,
 } from "@/lib/chat-logic";
 
 type Message =
@@ -18,6 +21,8 @@ type Message =
   | { id: number; role: "bot"; pick: KitPick };
 
 type QuickReply = { label: string; answer: Partial<ChatAnswers> };
+
+type SaveStatus = "idle" | "saving" | "saved" | "error";
 
 const QUESTIONS = {
   cookingFor: "Who are you cooking for?",
@@ -36,6 +41,15 @@ const INITIAL_MESSAGES: Message[] = [
   { id: 1, role: "bot", text: QUESTIONS.cookingFor },
 ];
 
+const RATING_OPTIONS: { label: string; rating: ChatRating | null }[] = [
+  { label: "👍 Helpful", rating: "up" },
+  { label: "👎 Not helpful", rating: "down" },
+  { label: "Skip", rating: null },
+];
+
+const errorClasses =
+  "rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/40 dark:text-red-400";
+
 function quickRepliesFor(answers: Partial<ChatAnswers>): QuickReply[] {
   if (!answers.cookingFor) {
     return COOKING_FOR_OPTIONS.map((option) => ({ label: option, answer: { cookingFor: option } }));
@@ -50,6 +64,41 @@ function quickRepliesFor(answers: Partial<ChatAnswers>): QuickReply[] {
     return CATEGORY_OPTIONS.map((category) => ({ label: category, answer: { category } }));
   }
   return [];
+}
+
+function buildPayload(
+  answers: Partial<ChatAnswers>,
+  pick: KitPick | undefined,
+  rating: ChatRating | null,
+  userMessage: string | null
+): SaveChatPayload {
+  return {
+    intake_people: answers.cookingFor ?? null,
+    intake_time: TIME_OPTIONS.find((option) => option.minutes === answers.maxMinutes)?.label ?? null,
+    intake_craving: answers.category ?? null,
+    recommended_kit: pick?.main.name ?? null,
+    rating,
+    user_message: userMessage,
+  };
+}
+
+// Resolves on success; throws with a readable message otherwise.
+async function saveChat(payload: SaveChatPayload): Promise<void> {
+  let response: Response;
+  try {
+    response = await fetch("/api/save-chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+  } catch {
+    throw new Error("Couldn't reach the server. Check your connection and try again.");
+  }
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(data?.error ?? "Couldn't save the chat. Please try again.");
+  }
 }
 
 function KitSummary({ label, kit }: { label: string; kit: MealKit }) {
@@ -85,7 +134,17 @@ export default function ChatPage() {
   const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
   const [answers, setAnswers] = useState<Partial<ChatAnswers>>({});
   const [draft, setDraft] = useState("");
+  const [ratingStatus, setRatingStatus] = useState<SaveStatus>("idle");
+  const [ratingError, setRatingError] = useState<string | null>(null);
+  const [guardrailSaveError, setGuardrailSaveError] = useState<string | null>(null);
   const nextId = useRef(INITIAL_MESSAGES.length);
+  // Refs (not state) so two fast clicks can't both start a save.
+  const ratingSaving = useRef(false);
+  const guardrailSaved = useRef(false);
+  // Bumped on Start over so saves from the previous chat don't update the new one.
+  const conversation = useRef(0);
+
+  const pick = messages.find((message) => "pick" in message)?.pick;
 
   function newId(): number {
     return nextId.current++;
@@ -108,23 +167,66 @@ export default function ChatPage() {
     setMessages((current) => [...current, userMessage, botMessage]);
   }
 
+  async function saveGuardrailChat(text: string) {
+    if (guardrailSaved.current) return;
+    guardrailSaved.current = true;
+    const chat = conversation.current;
+    setGuardrailSaveError(null);
+
+    try {
+      await saveChat(buildPayload(answers, pick, null, text));
+    } catch (err) {
+      if (chat !== conversation.current) return;
+      // Let the next guardrail message try again.
+      guardrailSaved.current = false;
+      setGuardrailSaveError(err instanceof Error ? err.message : "Couldn't save the chat.");
+    }
+  }
+
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const guardrail = detectGuardrail(draft);
+    const text = draft.trim();
+    const guardrail = detectGuardrail(text);
     if (!guardrail) return;
 
     setMessages((current) => [
       ...current,
-      { id: newId(), role: "user", text: draft.trim() },
+      { id: newId(), role: "user", text },
       { id: newId(), role: "bot", text: GUARDRAIL_REPLIES[guardrail] },
     ]);
     setDraft("");
+    saveGuardrailChat(text);
+  }
+
+  async function handleRating(rating: ChatRating | null) {
+    if (ratingSaving.current || ratingStatus === "saved") return;
+    ratingSaving.current = true;
+    const chat = conversation.current;
+    setRatingStatus("saving");
+    setRatingError(null);
+
+    try {
+      await saveChat(buildPayload(answers, pick, rating, null));
+      if (chat === conversation.current) setRatingStatus("saved");
+    } catch (err) {
+      if (chat !== conversation.current) return;
+      setRatingStatus("error");
+      setRatingError(err instanceof Error ? err.message : "Couldn't save the chat.");
+    } finally {
+      if (chat === conversation.current) ratingSaving.current = false;
+    }
   }
 
   function handleStartOver() {
+    conversation.current += 1;
+    ratingSaving.current = false;
+    guardrailSaved.current = false;
     setMessages(INITIAL_MESSAGES);
     setAnswers({});
     setDraft("");
+    setRatingStatus("idle");
+    setRatingError(null);
+    setGuardrailSaveError(null);
   }
 
   const quickReplies = quickRepliesFor(answers);
@@ -165,6 +267,43 @@ export default function ChatPage() {
           ))}
         </ul>
 
+        {pick && (
+          <div className="flex flex-col gap-3 rounded-2xl bg-zinc-50 p-4 dark:bg-zinc-900">
+            {ratingStatus === "saved" ? (
+              <p role="status" className="text-sm font-medium text-emerald-800 dark:text-emerald-300">
+                Thanks, your chat was saved.
+              </p>
+            ) : (
+              <>
+                <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+                  Was this helpful?
+                </p>
+                <div className="flex flex-wrap gap-2" role="group" aria-label="Rate this chat">
+                  {RATING_OPTIONS.map((option) => (
+                    <button
+                      key={option.label}
+                      type="button"
+                      onClick={() => handleRating(option.rating)}
+                      disabled={ratingStatus === "saving"}
+                      className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold text-zinc-700 hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-60 dark:border-white/10 dark:text-zinc-300 dark:hover:bg-zinc-800"
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+                {ratingStatus === "saving" && (
+                  <p className="text-sm text-zinc-600 dark:text-zinc-400">Saving...</p>
+                )}
+                {ratingError && (
+                  <p role="alert" className={errorClasses}>
+                    {ratingError}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        )}
+
         {quickReplies.length > 0 && (
           <div className="flex flex-wrap justify-end gap-2" role="group" aria-label="Quick replies">
             {quickReplies.map((reply) => (
@@ -180,6 +319,12 @@ export default function ChatPage() {
           </div>
         )}
 
+        {guardrailSaveError && (
+          <p role="alert" className={errorClasses}>
+            {guardrailSaveError}
+          </p>
+        )}
+
         <form
           onSubmit={handleSubmit}
           className="flex gap-2 border-t border-black/10 pt-4 dark:border-white/10"
@@ -192,7 +337,7 @@ export default function ChatPage() {
             type="text"
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            maxLength={500}
+            maxLength={MAX_USER_MESSAGE_LENGTH}
             autoComplete="off"
             placeholder="Type a message"
             className="min-w-0 flex-1 rounded-full border border-black/10 bg-transparent px-4 py-2 text-sm text-zinc-900 outline-none focus:border-emerald-700 dark:border-white/10 dark:text-zinc-50"

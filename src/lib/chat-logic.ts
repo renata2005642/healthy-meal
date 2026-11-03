@@ -20,6 +20,21 @@ export type KitPick = {
 
 export type Guardrail = "medical" | "off_topic";
 
+export type ChatRating = "up" | "down";
+
+// Body of POST /api/save-chat. Intake answers are the quick-reply labels.
+export type SaveChatPayload = {
+  intake_people: string | null;
+  intake_time: string | null;
+  intake_craving: string | null;
+  recommended_kit: string | null;
+  rating: ChatRating | null;
+  user_message: string | null;
+};
+
+export const MAX_RECOMMENDED_KIT_LENGTH = 100;
+export const MAX_USER_MESSAGE_LENGTH = 200;
+
 export const COOKING_FOR_OPTIONS: CookingFor[] = ["Just me", "Me and a roommate"];
 
 export const TIME_OPTIONS: { label: string; minutes: MaxMinutes }[] = [
