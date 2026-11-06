@@ -93,6 +93,8 @@ const MEDICAL_PATTERNS: RegExp[] = [
   /\b(medic|meds\b|pill|prescription|receta medica|pastilla|farmac|pharma)/,
   // Illness
   /\b(ill\b|illness|sick|disease|enferm|condition\b|padecimiento)/,
+  // Pregnancy and breastfeeding
+  /\b(pregnan|embaraz|gestacion|breastfeed|lactancia|amamant)/,
 ];
 
 // Returns null only for blank messages: any typed text is either medical or off topic.

@@ -30,10 +30,12 @@ const QUESTIONS = {
   category: "What do you feel like?",
 };
 
+// Every guardrail chat is saved with needs_human_review, so every reply says so.
+const HUMAN_REVIEW_NOTE = "A person on our team will review this chat.";
+
 const GUARDRAIL_REPLIES: Record<Guardrail, string> = {
-  medical:
-    "I can't give medical or nutrition advice. Please ask a doctor or nutritionist. I can still help you pick a kit.",
-  off_topic: "I can only help you pick a kit. Use the buttons to answer the questions.",
+  medical: `I can't give medical or nutrition advice. Please ask a doctor or nutritionist. I can still help you pick a kit. ${HUMAN_REVIEW_NOTE}`,
+  off_topic: `I can only help you pick a kit. Use the buttons to answer the questions. ${HUMAN_REVIEW_NOTE}`,
 };
 
 const INITIAL_MESSAGES: Message[] = [
