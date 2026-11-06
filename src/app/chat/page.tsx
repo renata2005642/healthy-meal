@@ -8,6 +8,7 @@ import {
   MAX_USER_MESSAGE_LENGTH,
   TIME_OPTIONS,
   detectGuardrail,
+  formatIngredient,
   groupCookingTips,
   pickKits,
   type ChatAnswers,
@@ -104,7 +105,7 @@ async function saveChat(payload: SaveChatPayload): Promise<void> {
   }
 }
 
-function KitSummary({ label, kit }: { label: string; kit: MealKit }) {
+function KitSummary({ label, kit, people }: { label: string; kit: MealKit; people: number }) {
   return (
     <div className="flex flex-col gap-1 rounded-xl border border-black/10 bg-white p-4 dark:border-white/10 dark:bg-black">
       <span className="text-xs font-semibold uppercase tracking-wide text-emerald-700 dark:text-emerald-400">
@@ -112,6 +113,19 @@ function KitSummary({ label, kit }: { label: string; kit: MealKit }) {
       </span>
       <span className="font-semibold text-zinc-900 dark:text-zinc-50">{kit.name}</span>
       <span className="text-sm text-zinc-600 dark:text-zinc-400">Prep time: {kit.prepTime}</span>
+      <details className="mt-2 text-sm">
+        <summary className="cursor-pointer font-medium text-emerald-700 dark:text-emerald-400">
+          See ingredients
+        </summary>
+        <p className="mt-2 font-medium text-zinc-900 dark:text-zinc-50">
+          {people > 1 ? `Ingredients for ${people} people` : "Ingredients for 1 person"}
+        </p>
+        <ul className="mt-1 flex list-disc flex-col gap-1 pl-4 text-zinc-600 dark:text-zinc-400">
+          {kit.ingredients.map((ingredient) => (
+            <li key={ingredient.name}>{formatIngredient(ingredient, people)}</li>
+          ))}
+        </ul>
+      </details>
     </div>
   );
 }
@@ -124,8 +138,8 @@ function Recommendation({ pick }: { pick: KitPick }) {
           ? "Here's my pick for you:"
           : "No kit matched both your time and taste, so here's the closest fit:"}
       </p>
-      <KitSummary label="Recommended" kit={pick.main} />
-      <KitSummary label="Alternative" kit={pick.alternative} />
+      <KitSummary label="Recommended" kit={pick.main} people={pick.people} />
+      <KitSummary label="Alternative" kit={pick.alternative} people={pick.people} />
       {groupCookingTips(pick).map((tip) => (
         <p key={tip}>{tip}</p>
       ))}

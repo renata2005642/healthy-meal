@@ -1,6 +1,6 @@
 // Pure, rule-based logic for the /chat guided assistant (no React, no AI, no Supabase).
 
-import { mealKits, type MealKit } from "@/data/meal-kits";
+import { mealKits, type Ingredient, type MealKit } from "@/data/meal-kits";
 
 export type CookingFor = "Just me" | "Me and a roommate";
 export type MaxMinutes = 10 | 20;
@@ -88,6 +88,24 @@ export function pickKits(answers: ChatAnswers, kits: MealKit[] = mealKits): KitP
     exactMatch: main.category === answers.category && prepMinutes(main) <= answers.maxMinutes,
     people,
   };
+}
+
+const FRACTIONS: Record<number, string> = { 0.25: "1/4", 0.5: "1/2", 0.75: "3/4" };
+
+// 0.5 → "1/2", 1.5 → "1 1/2", 2 → "2"; other values round to one decimal.
+function formatQuantity(quantity: number): string {
+  const whole = Math.floor(quantity);
+  const fraction = FRACTIONS[quantity - whole];
+  if (quantity === whole) return String(whole);
+  if (fraction) return whole > 0 ? `${whole} ${fraction}` : fraction;
+  return String(Math.round(quantity * 10) / 10);
+}
+
+// e.g. "Garlic: 2 cloves" for 2 people. Quantities in the kit data are per serving.
+export function formatIngredient(ingredient: Ingredient, people: number): string {
+  const quantity = ingredient.quantity * people;
+  const unit = quantity > 1 ? (ingredient.unitPlural ?? ingredient.unit) : ingredient.unit;
+  return `${ingredient.name}: ${[formatQuantity(quantity), unit].filter(Boolean).join(" ")}`;
 }
 
 // Extra lines for the result message when cooking for more than one person.
