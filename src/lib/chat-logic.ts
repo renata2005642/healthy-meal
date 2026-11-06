@@ -16,6 +16,8 @@ export type KitPick = {
   alternative: MealKit;
   // False when no kit fits both the time and the category, so `main` is the closest fit.
   exactMatch: boolean;
+  // How many people the kits are for, from the first intake answer.
+  people: number;
 };
 
 export type Guardrail = "medical" | "off_topic";
@@ -50,24 +52,62 @@ export function prepMinutes(kit: MealKit): number {
   return Number.isFinite(minutes) ? minutes : Infinity;
 }
 
-// Ranks every kit: time and category > category only > time only > neither,
-// then fastest first. Expects at least two kits in `kits`.
+export const PEOPLE_COUNT: Record<CookingFor, number> = {
+  "Just me": 1,
+  "Me and a roommate": 2,
+};
+
+// Our call, not kit data: bowls and pasta scale in one pot, but a doubled
+// stir fry overcrowds a home pan.
+const HARD_TO_DOUBLE_KIT_IDS = new Set(["veggie-stir-fry"]);
+
+export function isEasyToDouble(kit: MealKit): boolean {
+  return !HARD_TO_DOUBLE_KIT_IDS.has(kit.id);
+}
+
+// Ranks every kit: category first, then time, then (for more than one person)
+// easy to double, then fastest first. Expects at least two kits in `kits`.
 export function pickKits(answers: ChatAnswers, kits: MealKit[] = mealKits): KitPick {
+  const people = PEOPLE_COUNT[answers.cookingFor] ?? 1;
+
   function score(kit: MealKit): number {
-    const fitsTime = prepMinutes(kit) <= answers.maxMinutes;
     const fitsCategory = kit.category === answers.category;
-    return (fitsCategory ? 2 : 0) + (fitsTime ? 1 : 0);
+    const fitsTime = prepMinutes(kit) <= answers.maxMinutes;
+    const doubles = people > 1 && isEasyToDouble(kit);
+    return (fitsCategory ? 4 : 0) + (fitsTime ? 2 : 0) + (doubles ? 1 : 0);
   }
 
   const ranked = [...kits].sort(
     (a, b) => score(b) - score(a) || prepMinutes(a) - prepMinutes(b)
   );
+  const main = ranked[0];
 
   return {
-    main: ranked[0],
+    main,
     alternative: ranked[1],
-    exactMatch: score(ranked[0]) === 3,
+    exactMatch: main.category === answers.category && prepMinutes(main) <= answers.maxMinutes,
+    people,
   };
+}
+
+// Extra lines for the result message when cooking for more than one person.
+export function groupCookingTips(pick: KitPick): string[] {
+  if (pick.people <= 1) return [];
+
+  const tips = [
+    `You're cooking for ${pick.people} people, so multiply the ingredients by ${pick.people}.`,
+  ];
+  const hardToDouble = [pick.main, pick.alternative].filter((kit) => !isEasyToDouble(kit));
+  if (hardToDouble.length === 0) {
+    tips.push("Both kits are easy to double.");
+  } else {
+    for (const kit of hardToDouble) {
+      tips.push(
+        `${kit.name} is harder to double: cook it in ${pick.people} batches so the pan doesn't get crowded.`
+      );
+    }
+  }
+  return tips;
 }
 
 // Lowercase and strip accents so "alérgico" matches "alergico".

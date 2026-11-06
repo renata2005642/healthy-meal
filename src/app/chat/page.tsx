@@ -8,6 +8,7 @@ import {
   MAX_USER_MESSAGE_LENGTH,
   TIME_OPTIONS,
   detectGuardrail,
+  groupCookingTips,
   pickKits,
   type ChatAnswers,
   type ChatRating,
@@ -125,6 +126,9 @@ function Recommendation({ pick }: { pick: KitPick }) {
       </p>
       <KitSummary label="Recommended" kit={pick.main} />
       <KitSummary label="Alternative" kit={pick.alternative} />
+      {groupCookingTips(pick).map((tip) => (
+        <p key={tip}>{tip}</p>
+      ))}
       <p className="text-sm text-zinc-600 dark:text-zinc-400">
         Ordering isn&apos;t open yet, so you can&apos;t order these kits for now.
       </p>
