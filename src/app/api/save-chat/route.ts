@@ -27,6 +27,28 @@ function parseText(value: unknown, max: number, field: string): Parsed {
   return { ok: true, value: value.trim() || null };
 }
 
+const MAX_SUMMARY_LENGTH = 300;
+
+// e.g. "Just me | 10 min | High Protein -> Protein Power Bowl | rating: up | guardrail: no".
+// Built only from validated fields; the typed message is never included.
+function buildSummary(
+  people: string | null,
+  time: string | null,
+  craving: string | null,
+  recommendedKit: string | null,
+  rating: string | null,
+  guardrail: string | null
+): string {
+  const summary = [
+    people ?? "-",
+    time?.replace(/^Up to /, "") ?? "-",
+    `${craving ?? "-"} -> ${recommendedKit ?? "-"}`,
+    `rating: ${rating ?? "none"}`,
+    `guardrail: ${guardrail ?? "no"}`,
+  ].join(" | ");
+  return summary.slice(0, MAX_SUMMARY_LENGTH);
+}
+
 function badRequest(error: string) {
   return NextResponse.json({ error }, { status: 400 });
 }
@@ -82,6 +104,7 @@ export async function POST(request: Request) {
     user_message: guardrail ? userMessage : null,
     guardrail_triggered: guardrail !== null,
     needs_human_review: guardrail !== null,
+    summary: buildSummary(people, time, craving, recommendedKit, rating, guardrail),
   });
 
   if (error) {
