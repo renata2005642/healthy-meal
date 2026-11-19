@@ -70,6 +70,8 @@ export type RoadmapItem = {
 
 export type Roadmap = {
   heading: string;
+  // One plain sentence shown above the list.
+  intro: string;
   // In priority order: the first item comes first.
   items: RoadmapItem[];
 };
@@ -252,7 +254,7 @@ export const DEMO_STEPS: DemoStep[] = [
         {
           title: "What the evidence says so far",
           items: [
-            "3 outside testers finished the chat in 1 to 2 minutes without help and rated it Helpful.",
+            "5 outside testers finished the chat without help in 1 to 3 minutes and rated it Helpful.",
             "The chat saves every session and flags health questions for human review.",
           ],
         },
@@ -270,30 +272,31 @@ export const DEMO_STEPS: DemoStep[] = [
     },
     roadmap: {
       heading: "Version 2 roadmap",
+      intro: "These are the next things we would do if we keep building, in order.",
       items: [
         {
-          goal: "Validate prices with real student interviews.",
-          reason: "Prices are unvalidated, and every revenue estimate depends on them.",
+          goal: "Talk to real students to check that our prices feel right.",
+          reason: "We have not checked our prices yet, and every money estimate depends on them.",
         },
         {
-          goal: "Make \"who are you cooking for\" change which kit is picked, and add more kits.",
-          reason: "Recommendations should fit the people cooking, and more kits mean better matches.",
+          goal: "Make the chat pick a different kit depending on who you are cooking for, and add more kits.",
+          reason: "Suggestions should fit the people eating, and more kits mean better matches.",
         },
         {
-          goal: "Validate the ingredient lists and add recipes.",
-          reason: "The ingredient lists were written by the coding agent and have not been checked.",
+          goal: "Check the ingredient lists and add recipes.",
+          reason: "The coding agent wrote the ingredient lists, and no one has checked them yet.",
         },
         {
-          goal: "Add login and rate limiting before real use.",
-          reason: "Real users need protected accounts, and the app needs protection from abuse.",
+          goal: "Before real people use it, add accounts with a login and limit how many times one person can use the chat.",
+          reason: "Real users need their own protected accounts, and the site needs protection from misuse.",
         },
         {
-          goal: "Open real ordering only after prices are validated.",
-          reason: "Taking orders at unvalidated prices risks selling at a loss or at the wrong price.",
+          goal: "Only start taking real orders after the prices are checked.",
+          reason: "Selling at prices we have not checked could mean losing money or charging the wrong amount.",
         },
         {
-          goal: "Move off the free database tier, or keep it alive to avoid pauses.",
-          reason: "A paused database would stop saving and showing records.",
+          goal: "Move to a paid database plan, or keep the free one active so it does not pause.",
+          reason: "If the database pauses, the site stops saving and showing records.",
         },
       ],
     },

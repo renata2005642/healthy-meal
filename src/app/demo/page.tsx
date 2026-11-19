@@ -180,6 +180,7 @@ export default function DemoPage() {
             <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
               {step.roadmap.heading}
             </h3>
+            <p className="text-sm text-zinc-600 dark:text-zinc-400">{step.roadmap.intro}</p>
             <ol className="flex flex-col gap-3">
               {step.roadmap.items.map((item, index) => (
                 <li
@@ -189,15 +190,16 @@ export default function DemoPage() {
                   <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-xs font-semibold text-white">
                     {index + 1}
                   </span>
-                  <div className="flex flex-col gap-1">
-                    <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-                      {item.goal}
-                    </p>
-                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
-                      <span className="font-medium">Why: </span>
-                      {item.reason}
-                    </p>
-                  </div>
+                  <dl className="flex flex-col gap-1 text-sm">
+                    <dt className="text-xs font-semibold tracking-wide text-zinc-500 uppercase">
+                      Next step
+                    </dt>
+                    <dd className="font-semibold text-zinc-900 dark:text-zinc-50">{item.goal}</dd>
+                    <dt className="mt-1 text-xs font-semibold tracking-wide text-zinc-500 uppercase">
+                      Why it matters
+                    </dt>
+                    <dd className="text-zinc-600 dark:text-zinc-400">{item.reason}</dd>
+                  </dl>
                 </li>
               ))}
             </ol>
