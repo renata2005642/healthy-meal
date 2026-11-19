@@ -203,7 +203,12 @@ export const BUILD_LOGS: BuildLog[] = [
     dates: "Oct 30, 2026",
     built:
       "Marketing content hub: copy with .txt export, an A/B tester, a /kits page, and saved assets in marketing_assets.",
-    tested: [NOT_RECORDED],
+    tested: [
+      "2 A/B tests on the live page (headlines and CTAs): 3 votes vs 1 each.",
+      "3 software tests: Copy matches the card, Save appears without reloading, and saved assets persist after reload.",
+      "Export .txt check.",
+      "All passed.",
+    ],
     commits: [
       { hash: "34efb0d", message: "feat: add /marketing content hub with copy and .txt export" },
       { hash: "dfc995f", message: "feat: translate /marketing content to English" },
@@ -218,7 +223,11 @@ export const BUILD_LOGS: BuildLog[] = [
     dates: "Nov 3 – Nov 6, 2026",
     built:
       "Rule-based kit assistant: quick-reply intake, a kit recommendation, ratings and guardrails, with sessions saved in chat_sessions.",
-    tested: [NOT_RECORDED],
+    tested: [
+      "3 software tests passed: the intake gives a recommended kit, a health question triggers the guardrail and flags the chat for review, and a rating is saved in Supabase.",
+      "Live checks of the 2-people message and the pregnancy guardrail passed.",
+      "3 outside testers finished the chat in 1 to 2 minutes and rated it Helpful.",
+    ],
     commits: [
       { hash: "0070efa", message: "feat: add rule-based kit assistant on /chat" },
       { hash: "60638f2", message: "feat: save and rate /chat sessions in Supabase" },
@@ -235,8 +244,9 @@ export const BUILD_LOGS: BuildLog[] = [
     built:
       "Read-only dashboard with a card per Supabase table (total count + latest 5 rows), plus a fix for /core hanging in production.",
     tested: [
-      "/core fix: tsc, lint and build passed; the built app returned a meal from /api/generate-meal in about 6 seconds.",
-      "/dashboard: tsc, lint and build passed; all 5 table queries ran against Supabase, and chat_sessions returned only the 8 allowed columns.",
+      "Full-site regression of the 11 routes on the live site: 10 passed on the first run.",
+      "/core failed because Gemini timed out intermittently; fixed with a retry and English-only output (d963278).",
+      "Earlier, the free Supabase project had been paused for inactivity and had to be resumed.",
     ],
     commits: [
       { hash: "914ffe5", message: "fix: stop /core meal generation from hanging (20s Gemini timeout + clear UI error)" },
