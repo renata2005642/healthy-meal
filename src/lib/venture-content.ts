@@ -74,6 +74,33 @@ export type Roadmap = {
   items: RoadmapItem[];
 };
 
+export type TesterResult = {
+  user: string;
+  // Left empty when the tester's profile was not recorded.
+  who: string;
+  device: string;
+  time: string;
+  help: string;
+  rating: string;
+  confused: string;
+  comments: string;
+};
+
+export type Evidence = {
+  heading: string;
+  testers: TesterResult[];
+  testersNote: string;
+  summary: string[];
+  regression: {
+    heading: string;
+    items: string[];
+  };
+  limits: {
+    heading: string;
+    text: string;
+  };
+};
+
 export type DemoStep = {
   title: string;
   intro: string;
@@ -81,6 +108,7 @@ export type DemoStep = {
   body?: string[];
   links?: DemoLink[];
   showAgentMap?: boolean;
+  evidence?: Evidence;
   impactCheck?: ImpactCheck;
   roadmap?: Roadmap;
   // Placeholder steps are filled in a later commit.
@@ -136,9 +164,79 @@ export const DEMO_STEPS: DemoStep[] = [
   {
     title: "Evidence",
     intro: "What we tested and what we found.",
-    placeholder: {
+    evidence: {
       heading: "Testing summary",
-      note: "This section will be filled in a later update.",
+      testers: [
+        {
+          user: "User 1",
+          who: "Student",
+          device: "iPhone",
+          time: "1 min",
+          help: "No",
+          rating: "Helpful",
+          confused: "Nothing",
+          comments: "",
+        },
+        {
+          user: "User 2",
+          who: "Student",
+          device: "iPhone",
+          time: "1 min",
+          help: "No",
+          rating: "Helpful",
+          confused: "Nothing",
+          comments: "",
+        },
+        {
+          user: "User 3",
+          who: "Student",
+          device: "iPhone",
+          time: "2 min",
+          help: "No",
+          rating: "Helpful",
+          confused: "Nothing",
+          comments: "Asked to see the recipe.",
+        },
+        {
+          user: "User 4",
+          who: "Adult",
+          device: "iPhone",
+          time: "3 min",
+          help: "No",
+          rating: "Helpful",
+          confused: "The roadmap",
+          comments: "Was surprised that the meal idea uses AI.",
+        },
+        {
+          user: "User 5",
+          who: "",
+          device: "iPhone",
+          time: "2 min",
+          help: "No",
+          rating: "Helpful",
+          confused: "The roadmap",
+          comments: "",
+        },
+      ],
+      testersNote:
+        "Users 1 to 3 only tested /chat. Users 4 and 5 did the /demo walkthrough and the chat.",
+      summary: [
+        "5 of 5 finished without help.",
+        "5 of 5 rated the chat Helpful.",
+        "Times were between 1 and 3 minutes.",
+        "The roadmap was the only confusing part (2 of the 2 people who saw it).",
+      ],
+      regression: {
+        heading: "Full-site regression",
+        items: [
+          "11 routes tested on the live site: 10 passed on the first run.",
+          "/core failed because Gemini timed out intermittently. It was fixed with a retry and English-only output (commit d963278).",
+        ],
+      },
+      limits: {
+        heading: "Limits",
+        text: "The sample is only 5 people (friends, family and classmates), and none of them are paying customers. It shows the flow is usable, not that people would buy.",
+      },
     },
   },
   {

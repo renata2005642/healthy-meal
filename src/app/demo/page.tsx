@@ -77,6 +77,79 @@ export default function DemoPage() {
           </ul>
         )}
 
+        {step.evidence && (
+          <div className="flex flex-col gap-6">
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+              {step.evidence.heading}
+            </h3>
+
+            <div className="flex flex-col gap-2">
+              <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                External users
+              </h4>
+              <div className="overflow-x-auto rounded-xl border border-black/10 dark:border-white/10">
+                <table className="w-full min-w-[40rem] text-left text-sm">
+                  <thead className="bg-zinc-50 text-xs text-zinc-500 dark:bg-zinc-900">
+                    <tr>
+                      {["User", "Who", "Device", "Time", "Needed help", "Rating", "Confused by", "Comments"].map(
+                        (label) => (
+                          <th key={label} scope="col" className="px-3 py-2 font-medium">
+                            {label}
+                          </th>
+                        )
+                      )}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-black/10 text-zinc-700 dark:divide-white/10 dark:text-zinc-300">
+                    {step.evidence.testers.map((tester) => (
+                      <tr key={tester.user}>
+                        <th scope="row" className="px-3 py-2 font-medium text-zinc-900 dark:text-zinc-50">
+                          {tester.user}
+                        </th>
+                        <td className="px-3 py-2">{tester.who || "—"}</td>
+                        <td className="px-3 py-2">{tester.device}</td>
+                        <td className="px-3 py-2 whitespace-nowrap">{tester.time}</td>
+                        <td className="px-3 py-2">{tester.help}</td>
+                        <td className="px-3 py-2">{tester.rating}</td>
+                        <td className="px-3 py-2">{tester.confused}</td>
+                        <td className="px-3 py-2">{tester.comments || "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="text-xs text-zinc-500">{step.evidence.testersNote}</p>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">Summary</h4>
+              <ul className="list-disc space-y-1 pl-5 text-sm text-zinc-600 dark:text-zinc-400">
+                {step.evidence.summary.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                {step.evidence.regression.heading}
+              </h4>
+              <ul className="list-disc space-y-1 pl-5 text-sm text-zinc-600 dark:text-zinc-400">
+                {step.evidence.regression.items.map((line) => (
+                  <li key={line}>{line}</li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="flex flex-col gap-1 rounded-xl border border-dashed border-black/15 p-4 dark:border-white/15">
+              <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                {step.evidence.limits.heading}
+              </h4>
+              <p className="text-sm text-zinc-600 dark:text-zinc-400">{step.evidence.limits.text}</p>
+            </div>
+          </div>
+        )}
+
         {step.impactCheck && (
           <div className="flex flex-col gap-4">
             <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
