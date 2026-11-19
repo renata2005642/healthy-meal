@@ -1,3 +1,4 @@
+import AgentMap from "@/components/AgentMap";
 import { CopyButton } from "@/components/MarketingActions";
 import { BUILD_LOGS, PROMPT_LIBRARY, type PromptKind } from "@/lib/docs-content";
 
@@ -27,6 +28,16 @@ export default function DocsPage() {
           The prompts behind Healthy Meals and a week-by-week log of how it was built.
         </p>
       </div>
+
+      <section className="flex flex-col gap-4">
+        <div className="flex flex-col gap-2">
+          <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">Agent Map</h2>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            The four agents behind Healthy Meals and what goes in and out of each one.
+          </p>
+        </div>
+        <AgentMap />
+      </section>
 
       <section className="flex flex-col gap-8">
         <div className="flex flex-col gap-2">
