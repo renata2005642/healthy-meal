@@ -9,7 +9,8 @@ Available ingredients: {ingredients}
 Available time: {timeLabel}
 Budget: {budgetLabel}
 
-Respond with a single meal idea that realistically fits the time and budget given.`;
+Respond with a single meal idea that realistically fits the time and budget given.
+ALWAYS answer in English, even if the ingredients are written in another language (for example Spanish). Translate every ingredient name into English in your answer, including in ingredients_used.`;
 
 export function buildMealPrompt(
   ingredients: string,

@@ -5,6 +5,9 @@ const GEMINI_MODEL = "gemini-3.6-flash";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
 const GEMINI_TIMEOUT_MS = 20_000;
 
+// Two 20s attempts must fit in one function run on Vercel.
+export const maxDuration = 60;
+
 type GenerateMealRequestBody = {
   ingredients?: string;
   time?: string;
@@ -47,6 +50,35 @@ export async function POST(request: Request) {
 
   const prompt = buildMealPrompt(ingredients, time, budget);
 
+  // One automatic retry: worst case is two full timeouts (2 x 20s = 40s).
+  let result = await callGemini(apiKey, prompt);
+  if (!result.ok && result.retryable) {
+    console.error(`Gemini attempt 1 failed (${result.reason}); retrying once.`);
+    result = await callGemini(apiKey, prompt);
+  }
+
+  if (!result.ok) {
+    return NextResponse.json({ error: result.error }, { status: result.status });
+  }
+
+  return NextResponse.json(result.meal);
+}
+
+type GeminiResult =
+  | { ok: true; meal: MealIdea }
+  | { ok: false; status: number; error: string; reason: string; retryable: boolean };
+
+function failure(
+  status: number,
+  error: string,
+  reason: string,
+  retryable = true
+): GeminiResult {
+  return { ok: false, status, error, reason, retryable };
+}
+
+// A single Gemini attempt with its own 20s timeout.
+async function callGemini(apiKey: string, prompt: string): Promise<GeminiResult> {
   let geminiResponse: Response;
   try {
     geminiResponse = await fetch(GEMINI_URL, {
@@ -73,24 +105,26 @@ export async function POST(request: Request) {
   } catch (err) {
     if (err instanceof Error && err.name === "TimeoutError") {
       console.error(`Gemini request timed out after ${GEMINI_TIMEOUT_MS}ms`);
-      return NextResponse.json(
-        { error: "The meal generator took too long to respond. Please try again." },
-        { status: 504 }
+      return failure(
+        504,
+        "The meal generator took too long to respond. Please try again.",
+        "timeout"
       );
     }
     console.error("Failed to reach the Gemini API:", err instanceof Error ? err.name : err);
-    return NextResponse.json(
-      { error: "Failed to reach the meal generator. Please try again." },
-      { status: 502 }
-    );
+    return failure(502, "Failed to reach the meal generator. Please try again.", "network error");
   }
 
   if (!geminiResponse.ok) {
     const errorText = await geminiResponse.text().catch(() => "");
     console.error(`Gemini API error ${geminiResponse.status}: ${errorText.slice(0, 500)}`);
-    return NextResponse.json(
-      { error: `The meal generator returned an error (status ${geminiResponse.status}). Please try again.` },
-      { status: 502 }
+    // 429 and 5xx are usually temporary; other 4xx (bad key, bad model) would fail again.
+    const retryable = geminiResponse.status === 429 || geminiResponse.status >= 500;
+    return failure(
+      502,
+      `The meal generator returned an error (status ${geminiResponse.status}). Please try again.`,
+      `status ${geminiResponse.status}`,
+      retryable
     );
   }
 
@@ -99,28 +133,16 @@ export async function POST(request: Request) {
     const data = await geminiResponse.json();
     text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
   } catch {
-    return NextResponse.json(
-      { error: "Gemini API returned an unreadable response." },
-      { status: 502 }
-    );
+    return failure(502, "Gemini API returned an unreadable response.", "unreadable response");
   }
 
   if (!text) {
-    return NextResponse.json(
-      { error: "Gemini API returned an empty response." },
-      { status: 502 }
-    );
+    return failure(502, "Gemini API returned an empty response.", "empty response");
   }
 
-  let meal: MealIdea;
   try {
-    meal = JSON.parse(text);
+    return { ok: true, meal: JSON.parse(text) as MealIdea };
   } catch {
-    return NextResponse.json(
-      { error: "Gemini API returned invalid JSON." },
-      { status: 502 }
-    );
+    return failure(502, "Gemini API returned invalid JSON.", "invalid JSON");
   }
-
-  return NextResponse.json(meal);
 }

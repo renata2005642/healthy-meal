@@ -64,8 +64,8 @@ export default function CorePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ingredients, time, budget }),
-        // Slightly longer than the server's 20s Gemini timeout so its message wins.
-        signal: AbortSignal.timeout(25_000),
+        // Longer than the server's worst case (2 Gemini attempts x 20s) so its message wins.
+        signal: AbortSignal.timeout(45_000),
       });
 
       const data = await response.json().catch(() => null);
