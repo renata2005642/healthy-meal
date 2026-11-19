@@ -53,6 +53,27 @@ export type DemoLink = {
   description: string;
 };
 
+export type ImpactGroup = {
+  title: string;
+  items: string[];
+};
+
+export type ImpactCheck = {
+  heading: string;
+  groups: ImpactGroup[];
+};
+
+export type RoadmapItem = {
+  goal: string;
+  reason: string;
+};
+
+export type Roadmap = {
+  heading: string;
+  // In priority order: the first item comes first.
+  items: RoadmapItem[];
+};
+
 export type DemoStep = {
   title: string;
   intro: string;
@@ -60,6 +81,8 @@ export type DemoStep = {
   body?: string[];
   links?: DemoLink[];
   showAgentMap?: boolean;
+  impactCheck?: ImpactCheck;
+  roadmap?: Roadmap;
   // Placeholder steps are filled in a later commit.
   placeholder?: {
     heading: string;
@@ -120,10 +143,61 @@ export const DEMO_STEPS: DemoStep[] = [
   },
   {
     title: "Impact and next steps",
-    intro: "What changed for students, and what comes next.",
-    placeholder: {
-      heading: "Impact check and Version 2 roadmap",
-      note: "This section will be filled in a later update.",
+    intro: "Who this helps, what the evidence says so far, and what comes next.",
+    impactCheck: {
+      heading: "Impact check",
+      groups: [
+        {
+          title: "Who it helps",
+          items: ["Students who live alone or with a roommate and have little time to cook."],
+        },
+        {
+          title: "What the evidence says so far",
+          items: [
+            "3 outside testers finished the chat in 1 to 2 minutes without help and rated it Helpful.",
+            "The chat saves every session and flags health questions for human review.",
+          ],
+        },
+        {
+          title: "What is not validated yet",
+          items: [
+            "Prices are unvalidated.",
+            "No real orders exist.",
+            "Ingredient lists were written by the coding agent.",
+            "The test sample is small.",
+            "Nothing proves students would pay.",
+          ],
+        },
+      ],
+    },
+    roadmap: {
+      heading: "Version 2 roadmap",
+      items: [
+        {
+          goal: "Validate prices with real student interviews.",
+          reason: "Prices are unvalidated, and every revenue estimate depends on them.",
+        },
+        {
+          goal: "Make \"who are you cooking for\" change which kit is picked, and add more kits.",
+          reason: "Recommendations should fit the people cooking, and more kits mean better matches.",
+        },
+        {
+          goal: "Validate the ingredient lists and add recipes.",
+          reason: "The ingredient lists were written by the coding agent and have not been checked.",
+        },
+        {
+          goal: "Add login and rate limiting before real use.",
+          reason: "Real users need protected accounts, and the app needs protection from abuse.",
+        },
+        {
+          goal: "Open real ordering only after prices are validated.",
+          reason: "Taking orders at unvalidated prices risks selling at a loss or at the wrong price.",
+        },
+        {
+          goal: "Move off the free database tier, or keep it alive to avoid pauses.",
+          reason: "A paused database would stop saving and showing records.",
+        },
+      ],
     },
   },
 ];

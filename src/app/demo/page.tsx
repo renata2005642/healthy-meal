@@ -77,6 +77,60 @@ export default function DemoPage() {
           </ul>
         )}
 
+        {step.impactCheck && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+              {step.impactCheck.heading}
+            </h3>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {step.impactCheck.groups.map((group) => (
+                <div
+                  key={group.title}
+                  className="flex flex-col gap-2 rounded-xl border border-black/10 p-4 dark:border-white/10"
+                >
+                  <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                    {group.title}
+                  </h4>
+                  <ul className="list-disc space-y-1 pl-5 text-sm text-zinc-600 dark:text-zinc-400">
+                    {group.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {step.roadmap && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+              {step.roadmap.heading}
+            </h3>
+            <ol className="flex flex-col gap-3">
+              {step.roadmap.items.map((item, index) => (
+                <li
+                  key={item.goal}
+                  className="flex gap-3 rounded-xl border border-black/10 p-4 dark:border-white/10"
+                >
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-700 text-xs font-semibold text-white">
+                    {index + 1}
+                  </span>
+                  <div className="flex flex-col gap-1">
+                    <p className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                      {item.goal}
+                    </p>
+                    <p className="text-sm text-zinc-600 dark:text-zinc-400">
+                      <span className="font-medium">Why: </span>
+                      {item.reason}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        )}
+
         {step.placeholder && (
           <div className="flex flex-col gap-2 rounded-xl border border-dashed border-black/15 p-5 dark:border-white/15">
             <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
