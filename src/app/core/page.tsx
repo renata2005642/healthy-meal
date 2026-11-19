@@ -64,17 +64,23 @@ export default function CorePage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ingredients, time, budget }),
+        // Slightly longer than the server's 20s Gemini timeout so its message wins.
+        signal: AbortSignal.timeout(25_000),
       });
 
-      const data = await response.json();
+      const data = await response.json().catch(() => null);
 
-      if (!response.ok) {
-        throw new Error(data?.error ?? "Something went wrong generating your meal idea.");
+      if (!response.ok || !data) {
+        throw new Error(data?.error ?? "Something went wrong generating your meal idea. Please try again.");
       }
 
       setMeal(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
+      if (err instanceof Error && err.name === "TimeoutError") {
+        setError("The meal generator took too long to respond. Please try again.");
+      } else {
+        setError(err instanceof Error ? err.message : "Something went wrong.");
+      }
     } finally {
       setLoading(false);
     }

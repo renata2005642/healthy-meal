@@ -3,6 +3,7 @@ import { buildMealPrompt } from "@/lib/prompts";
 
 const GEMINI_MODEL = "gemini-3.6-flash";
 const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+const GEMINI_TIMEOUT_MS = 20_000;
 
 type GenerateMealRequestBody = {
   ingredients?: string;
@@ -48,9 +49,10 @@ export async function POST(request: Request) {
 
   let geminiResponse: Response;
   try {
-    geminiResponse = await fetch(`${GEMINI_URL}?key=${apiKey}`, {
+    geminiResponse = await fetch(GEMINI_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
+      signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
@@ -68,23 +70,40 @@ export async function POST(request: Request) {
         },
       }),
     });
-  } catch {
+  } catch (err) {
+    if (err instanceof Error && err.name === "TimeoutError") {
+      console.error(`Gemini request timed out after ${GEMINI_TIMEOUT_MS}ms`);
+      return NextResponse.json(
+        { error: "The meal generator took too long to respond. Please try again." },
+        { status: 504 }
+      );
+    }
+    console.error("Failed to reach the Gemini API:", err instanceof Error ? err.name : err);
     return NextResponse.json(
-      { error: "Failed to reach the Gemini API." },
+      { error: "Failed to reach the meal generator. Please try again." },
       { status: 502 }
     );
   }
 
   if (!geminiResponse.ok) {
-    const errorText = await geminiResponse.text();
+    const errorText = await geminiResponse.text().catch(() => "");
+    console.error(`Gemini API error ${geminiResponse.status}: ${errorText.slice(0, 500)}`);
     return NextResponse.json(
-      { error: `Gemini API error: ${errorText}` },
+      { error: `The meal generator returned an error (status ${geminiResponse.status}). Please try again.` },
       { status: 502 }
     );
   }
 
-  const data = await geminiResponse.json();
-  const text: string | undefined = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  let text: string | undefined;
+  try {
+    const data = await geminiResponse.json();
+    text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+  } catch {
+    return NextResponse.json(
+      { error: "Gemini API returned an unreadable response." },
+      { status: 502 }
+    );
+  }
 
   if (!text) {
     return NextResponse.json(
