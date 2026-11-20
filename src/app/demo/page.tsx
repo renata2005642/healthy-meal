@@ -175,6 +175,31 @@ export default function DemoPage() {
           </div>
         )}
 
+        {step.harmCheck && (
+          <div className="flex flex-col gap-4">
+            <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">
+              {step.harmCheck.heading}
+            </h3>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {step.harmCheck.groups.map((group) => (
+                <div
+                  key={group.title}
+                  className="flex flex-col gap-2 rounded-xl border border-black/10 p-4 dark:border-white/10"
+                >
+                  <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
+                    {group.title}
+                  </h4>
+                  <ul className="list-disc space-y-1 pl-5 text-sm text-zinc-600 dark:text-zinc-400">
+                    {group.items.map((item) => (
+                      <li key={item}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
         {step.roadmap && (
           <div className="flex flex-col gap-4">
             <h3 className="text-lg font-semibold text-zinc-900 dark:text-zinc-50">

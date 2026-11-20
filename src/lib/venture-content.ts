@@ -63,6 +63,11 @@ export type ImpactCheck = {
   groups: ImpactGroup[];
 };
 
+export type HarmCheck = {
+  heading: string;
+  groups: ImpactGroup[];
+};
+
 export type RoadmapItem = {
   goal: string;
   reason: string;
@@ -112,6 +117,7 @@ export type DemoStep = {
   showAgentMap?: boolean;
   evidence?: Evidence;
   impactCheck?: ImpactCheck;
+  harmCheck?: HarmCheck;
   roadmap?: Roadmap;
   // Placeholder steps are filled in a later commit.
   placeholder?: {
@@ -266,6 +272,31 @@ export const DEMO_STEPS: DemoStep[] = [
             "Ingredient lists were written by the coding agent.",
             "The test sample is small.",
             "Nothing proves students would pay.",
+          ],
+        },
+      ],
+    },
+    harmCheck: {
+      heading: "Harm check",
+      groups: [
+        {
+          title: "What we do to reduce harm",
+          items: [
+            "The chat refuses medical or nutrition questions and tells the person to ask a doctor or nutritionist.",
+            "Chats with health questions are flagged for human review.",
+            "Typed text is stored only when that guardrail fires (max 200 characters), and the public cannot read it, not even through the dashboard.",
+            "The dashboard is read-only and shows no flagged chats.",
+            "The kits and the chat show no prices, and ordering is closed, so nobody can be charged.",
+          ],
+        },
+        {
+          title: "Risks that remain",
+          items: [
+            "The AI meal ideas on /core are suggestions, not nutrition advice, and no nutritionist has reviewed them.",
+            "Ingredient lists were written by the coding agent and not checked.",
+            "The chat does not ask about allergies. It only catches them if the person types them.",
+            "There is no login or rate limit, so anyone with the link could add records.",
+            "The free database can pause for inactivity.",
           ],
         },
       ],
