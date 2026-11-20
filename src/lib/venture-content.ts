@@ -183,7 +183,7 @@ export const DEMO_STEPS: DemoStep[] = [
           help: "No",
           rating: "Helpful",
           confused: "Nothing",
-          comments: "",
+          comments: "“Very efficient, it got what I needed right.”",
         },
         {
           user: "User 2",
@@ -193,7 +193,7 @@ export const DEMO_STEPS: DemoStep[] = [
           help: "No",
           rating: "Helpful",
           confused: "Nothing",
-          comments: "",
+          comments: "“I liked that it gives 2 options.”",
         },
         {
           user: "User 3",
@@ -203,7 +203,7 @@ export const DEMO_STEPS: DemoStep[] = [
           help: "No",
           rating: "Helpful",
           confused: "Nothing",
-          comments: "Asked to see the recipe.",
+          comments: "“Very useful, but I would like to see the recipe.”",
         },
         {
           user: "User 4",
@@ -213,7 +213,7 @@ export const DEMO_STEPS: DemoStep[] = [
           help: "No",
           rating: "Helpful",
           confused: "The roadmap",
-          comments: "Was surprised that the meal idea uses AI.",
+          comments: "“Wait, does it use AI to make the meal idea?”",
         },
         {
           user: "User 5",
@@ -223,7 +223,7 @@ export const DEMO_STEPS: DemoStep[] = [
           help: "No",
           rating: "Helpful",
           confused: "The roadmap",
-          comments: "",
+          comments: "“I got a craving for the idea it gave me.”",
         },
       ],
       testersNote:
