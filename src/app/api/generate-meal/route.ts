@@ -1,11 +1,17 @@
 import { NextResponse } from "next/server";
 import { buildMealPrompt } from "@/lib/prompts";
 
-const GEMINI_MODEL = "gemini-3.6-flash";
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent`;
+// Gemini models: the primary is tried first; if it is overloaded (503),
+// rate-limited (429) or times out, the fallback (a different model) is tried once.
+const GEMINI_PRIMARY_MODEL = "gemini-3.6-flash";
+const GEMINI_FALLBACK_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_TIMEOUT_MS = 20_000;
 
-// Two 20s attempts must fit in one function run on Vercel.
+function geminiUrl(model: string): string {
+  return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+}
+
+// Two 20s attempts (40s worst case) must fit in one function run on Vercel.
 export const maxDuration = 60;
 
 type GenerateMealRequestBody = {
@@ -50,11 +56,14 @@ export async function POST(request: Request) {
 
   const prompt = buildMealPrompt(ingredients, time, budget);
 
-  // One automatic retry: worst case is two full timeouts (2 x 20s = 40s).
-  let result = await callGemini(apiKey, prompt);
+  // Primary model first; on 503/429/timeout, one attempt with the fallback model.
+  // Worst case is two full timeouts (2 x 20s = 40s).
+  let result = await callGemini(GEMINI_PRIMARY_MODEL, apiKey, prompt);
   if (!result.ok && result.retryable) {
-    console.error(`Gemini attempt 1 failed (${result.reason}); retrying once.`);
-    result = await callGemini(apiKey, prompt);
+    console.error(
+      `Gemini ${GEMINI_PRIMARY_MODEL} failed (${result.reason}); trying ${GEMINI_FALLBACK_MODEL}.`
+    );
+    result = await callGemini(GEMINI_FALLBACK_MODEL, apiKey, prompt);
   }
 
   if (!result.ok) {
@@ -72,16 +81,20 @@ function failure(
   status: number,
   error: string,
   reason: string,
-  retryable = true
+  retryable = false
 ): GeminiResult {
   return { ok: false, status, error, reason, retryable };
 }
 
 // A single Gemini attempt with its own 20s timeout.
-async function callGemini(apiKey: string, prompt: string): Promise<GeminiResult> {
+async function callGemini(
+  model: string,
+  apiKey: string,
+  prompt: string
+): Promise<GeminiResult> {
   let geminiResponse: Response;
   try {
-    geminiResponse = await fetch(GEMINI_URL, {
+    geminiResponse = await fetch(geminiUrl(model), {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
       signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
@@ -104,22 +117,27 @@ async function callGemini(apiKey: string, prompt: string): Promise<GeminiResult>
     });
   } catch (err) {
     if (err instanceof Error && err.name === "TimeoutError") {
-      console.error(`Gemini request timed out after ${GEMINI_TIMEOUT_MS}ms`);
+      console.error(`Gemini ${model} timed out after ${GEMINI_TIMEOUT_MS}ms`);
       return failure(
         504,
         "The meal generator took too long to respond. Please try again.",
-        "timeout"
+        "timeout",
+        true
       );
     }
-    console.error("Failed to reach the Gemini API:", err instanceof Error ? err.name : err);
-    return failure(502, "Failed to reach the meal generator. Please try again.", "network error");
+    console.error(`Failed to reach Gemini ${model}:`, err instanceof Error ? err.name : err);
+    return failure(
+      502,
+      "Failed to reach the meal generator. Please try again.",
+      "network error"
+    );
   }
 
   if (!geminiResponse.ok) {
     const errorText = await geminiResponse.text().catch(() => "");
-    console.error(`Gemini API error ${geminiResponse.status}: ${errorText.slice(0, 500)}`);
-    // 429 and 5xx are usually temporary; other 4xx (bad key, bad model) would fail again.
-    const retryable = geminiResponse.status === 429 || geminiResponse.status >= 500;
+    console.error(`Gemini ${model} error ${geminiResponse.status}: ${errorText.slice(0, 500)}`);
+    // Only overload (503) and rate limits (429) switch to the fallback model.
+    const retryable = geminiResponse.status === 503 || geminiResponse.status === 429;
     return failure(
       502,
       `The meal generator returned an error (status ${geminiResponse.status}). Please try again.`,
