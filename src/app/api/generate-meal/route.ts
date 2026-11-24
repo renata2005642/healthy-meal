@@ -1,17 +1,25 @@
 import { NextResponse } from "next/server";
 import { buildMealPrompt } from "@/lib/prompts";
 
-// Gemini models: the primary is tried first; if it is overloaded (503),
-// rate-limited (429) or times out, the fallback (a different model) is tried once.
+// Gemini models: the primary is tried twice, then the fallback once. The next
+// attempt only runs if the previous one was overloaded (503), rate-limited (429)
+// or timed out.
 const GEMINI_PRIMARY_MODEL = "gemini-3.5-flash-lite";
 const GEMINI_FALLBACK_MODEL = "gemini-3.6-flash";
-const GEMINI_TIMEOUT_MS = 20_000;
+
+type GeminiAttempt = { model: string; timeoutMs: number; delayBeforeMs: number };
+
+const GEMINI_ATTEMPTS: GeminiAttempt[] = [
+  { model: GEMINI_PRIMARY_MODEL, timeoutMs: 12_000, delayBeforeMs: 0 },
+  { model: GEMINI_PRIMARY_MODEL, timeoutMs: 12_000, delayBeforeMs: 1_000 },
+  { model: GEMINI_FALLBACK_MODEL, timeoutMs: 15_000, delayBeforeMs: 0 },
+];
 
 function geminiUrl(model: string): string {
   return `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
 }
 
-// Two 20s attempts (40s worst case) must fit in one function run on Vercel.
+// Worst case is 12s + 1s pause + 12s + 15s = 40s, inside one function run on Vercel.
 export const maxDuration = 60;
 
 type GenerateMealRequestBody = {
@@ -56,14 +64,26 @@ export async function POST(request: Request) {
 
   const prompt = buildMealPrompt(ingredients, time, budget);
 
-  // Primary model first; on 503/429/timeout, one attempt with the fallback model.
-  // Worst case is two full timeouts (2 x 20s = 40s).
-  let result = await callGemini(GEMINI_PRIMARY_MODEL, apiKey, prompt);
-  if (!result.ok && result.retryable) {
-    console.error(
-      `Gemini ${GEMINI_PRIMARY_MODEL} failed (${result.reason}); trying ${GEMINI_FALLBACK_MODEL}.`
+  let result: GeminiResult | undefined;
+  for (const [i, attempt] of GEMINI_ATTEMPTS.entries()) {
+    if (attempt.delayBeforeMs > 0) {
+      await new Promise((resolve) => setTimeout(resolve, attempt.delayBeforeMs));
+    }
+    result = await callGemini(attempt.model, attempt.timeoutMs, apiKey, prompt);
+    if (result.ok || !result.retryable) break;
+    const next = GEMINI_ATTEMPTS[i + 1];
+    if (next) {
+      console.error(
+        `Gemini attempt ${i + 1} (${attempt.model}) failed (${result.reason}); trying ${next.model}.`
+      );
+    }
+  }
+
+  if (!result) {
+    return NextResponse.json(
+      { error: "Failed to reach the meal generator. Please try again." },
+      { status: 502 }
     );
-    result = await callGemini(GEMINI_FALLBACK_MODEL, apiKey, prompt);
   }
 
   if (!result.ok) {
@@ -86,9 +106,10 @@ function failure(
   return { ok: false, status, error, reason, retryable };
 }
 
-// A single Gemini attempt with its own 20s timeout.
+// A single Gemini attempt with its own timeout.
 async function callGemini(
   model: string,
+  timeoutMs: number,
   apiKey: string,
   prompt: string
 ): Promise<GeminiResult> {
@@ -97,7 +118,7 @@ async function callGemini(
     geminiResponse = await fetch(geminiUrl(model), {
       method: "POST",
       headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
-      signal: AbortSignal.timeout(GEMINI_TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeoutMs),
       body: JSON.stringify({
         contents: [{ role: "user", parts: [{ text: prompt }] }],
         generationConfig: {
@@ -117,7 +138,7 @@ async function callGemini(
     });
   } catch (err) {
     if (err instanceof Error && err.name === "TimeoutError") {
-      console.error(`Gemini ${model} timed out after ${GEMINI_TIMEOUT_MS}ms`);
+      console.error(`Gemini ${model} timed out after ${timeoutMs}ms`);
       return failure(
         504,
         "The meal generator took too long to respond. Please try again.",
