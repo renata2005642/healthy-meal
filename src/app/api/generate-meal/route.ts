@@ -3,8 +3,8 @@ import { buildMealPrompt } from "@/lib/prompts";
 
 // Gemini models: the primary is tried first; if it is overloaded (503),
 // rate-limited (429) or times out, the fallback (a different model) is tried once.
-const GEMINI_PRIMARY_MODEL = "gemini-3.6-flash";
-const GEMINI_FALLBACK_MODEL = "gemini-3.5-flash-lite";
+const GEMINI_PRIMARY_MODEL = "gemini-3.5-flash-lite";
+const GEMINI_FALLBACK_MODEL = "gemini-3.6-flash";
 const GEMINI_TIMEOUT_MS = 20_000;
 
 function geminiUrl(model: string): string {
